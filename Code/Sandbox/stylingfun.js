@@ -36,9 +36,8 @@ var conversionPath = function(class_prefix, size, totalTpIpArray, data){
   createPieChartColors(pieChartRainbow, data);
   let combinations = getCombinations(totalTpIpArray);
   for(let i = 0; i < combinations.length; i++){
-    let subComb = combinations[i].split('');
+    let subComb = combinations[i].split(',');
     subComb.reverse();
-    console.log(rainbow, subComb);
     let color =  hexToRgb(rainbow[subComb[0]]);
     let str1 = "."+class_prefix+"-"+subComb[0];
     let str = ".enable-path-"+subComb[0];
@@ -83,11 +82,11 @@ var getCombinations = function(chars){
   var result = [];
   var f = function(prefix, chars) {
     for (var i = 0; i < chars.length; i++) {
-      if(prefix != '') result.push(prefix + chars[i]);
+      if(prefix != '') result.push(prefix + ","+ chars[i]);
       f(prefix + chars[i], chars.slice(i + 1));
     }
   }
-  f('', chars);
+  f('', chars); //does not work with a non empty separator
   return result;
 }
 var hexToRgb = function(hex){
