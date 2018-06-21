@@ -1,5 +1,5 @@
 var exports = module.exports
-var requireFromUrl = require('require-from-url/sync');
+//var requireFromUrl = require('require-from-url/sync');
 var fs = require('fs');
 var dagre = require("dagre");
 var dagreD3 = require("dagre-d3");
@@ -111,7 +111,7 @@ var links, routes;
 var argv = process.argv;
 if(argv[3] != undefined){
  routes = fs.readFileSync(argv[3], "utf8").split('\n');
- links = fs.readFileSync(argv[2], "ucs2").split('\n')
+ links = fs.readFileSync(argv[2], "utf8").split('\n')
 }
 else{
 if(argv[2] === undefined) links = fs.readFileSync("./demoLog2.txt", "ucs2").split('\n');

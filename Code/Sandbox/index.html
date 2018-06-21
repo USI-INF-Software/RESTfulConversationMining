@@ -30,9 +30,9 @@
 
   <body>
     <div style="display: block">
-      <div id="Container" style="display: flex">
+      <div id="Container" style="display: flex; justify-content: space-between; width: 50vw;">
         <button onclick="goBack()">Go Back</button>
-        <div id="Clients" style="float: left">
+        <div id="Clients">
           <select id="multiSelect-Clients" multiple="multiple" onchange="changeTp()">
           </select>
           <!-- <button class="dropbtn" onmouseover="displayClients()">Clients</button> -->
@@ -54,7 +54,7 @@
           <input type="submit" />
         </form> -->
       </div>
-      <div id="PatternContainer"style="display: flex; float: right; ">
+      <div id="PatternContainer"style="display: flex; width: 50vw;">
         <div id="CandidatePatternMenu" style="display: block">
           <form id="formCandidatePatterns" onsubmit="generateCP()" style="display: block">
             <input id="candidateLength" type="number" value="2" min="2" style="display: block">

@@ -2,6 +2,11 @@
   fill: #00ffd0;
 } */
 
+select {
+  min-height: 10vh;
+  resize: vertical;
+}
+
 text {
   font-weight: 300;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serf;

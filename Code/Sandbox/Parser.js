@@ -1,5 +1,5 @@
 var exports = module.exports
-var requireFromUrl = require('require-from-url/sync');
+//var requireFromUrl = require('require-from-url/sync');
 var fs = require('fs');
 var dagre = require("dagre");
 var dagreD3 = require("dagre-d3");

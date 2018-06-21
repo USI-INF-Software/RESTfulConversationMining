@@ -82,8 +82,12 @@ var getCombinations = function(chars){
   var result = [];
   var f = function(prefix, chars) {
     for (var i = 0; i < chars.length; i++) {
-      if(prefix != '') result.push(prefix + ","+ chars[i]);
-      f(prefix + chars[i], chars.slice(i + 1));
+      var s = chars[i];
+      if(prefix != '') 
+        s = prefix + ","+ chars[i];
+
+      result.push(s);
+      f(s, chars.slice(i + 1));
     }
   }
   f('', chars); //does not work with a non empty separator
