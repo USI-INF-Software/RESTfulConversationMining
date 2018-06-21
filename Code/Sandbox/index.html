@@ -39,8 +39,11 @@
         </div>
         <select id="multiSelect" multiple="multiple">
         </select>
-        <button id="multiSelectForm" type="submit"/> Draw </button>
-        <div id="Btns">
+        
+        <div id="Btns" style="display: flex; flex-direction: column;">
+          <button id="multiSelectForm" type="submit"/> Draw </button>
+          <progress id="progress" style="display: none";></progress>
+          <p id="status" style="display: none";></p>
         </div>
         <div id="VisualizationConfig" style="display: none">
           Node Frequency Coloring: <input type="checkbox" id="nfc" onclick="myFunction()"> <br />
@@ -459,6 +462,9 @@ var fixVisualizationConfig = function(nfc, eft, edc, sep, statusColoring){
 }
 //Draw the Graph for the selected IP.
 var drawGraph = function(dataObject){
+
+  progress("init",0);
+
   var g = new dagreD3.graphlib.Graph()
   .setGraph({})
   .setDefaultEdgeLabel(function() { return {}; });
@@ -496,6 +502,9 @@ var drawGraph = function(dataObject){
     nodeIpTp : {},
     sharedNodes : {},
   }
+
+  progress("start");
+
   for(let client in dataObject){
     let start = "start-"+client;
     g.setNode(start, {shape: "circle", class : "start" + " tpIpColoring-"+client});
@@ -509,6 +518,9 @@ var drawGraph = function(dataObject){
     comparisonTableData.timePorIP.push(client);
     nodes = obj.nodes;
   }
+
+  progress("delay");
+
   var totalRequestsData = totalNumberOfRequests(nodes);
   var totalRequests = totalRequestsData.total;
   var maxRequests = totalRequestsData.maxRequests;
@@ -517,12 +529,22 @@ var drawGraph = function(dataObject){
   var totalAvgKey = obj.totalAvgKey;
   var maxDelay = obj.MAX;
   var minDelay = obj.MIN;
+
+  progress("draw graph");
   drawG(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKey, maxDelay, minDelay, totalRequests, endConnections, statusObj);
+
+  progress("node classes");
   setNodeClasses(g, nodes, totalRequestsData);
+
+  progress("visualization config");
   setVisualizationConfig(nfc, eft, edc, sep, statusColoring, maxRequests, statusObj);
   // triggerEdgeProbability(sep);
+
+  //this seems to be the bottleneck!
+  progress("conversionPath "+totalTpIpArray.length);
   var rainbows = conversionPath("tpIpColoring", totalTpIpArray.length, totalTpIpArray, comparisonTableData.uniquenessNodes);
 
+  progress("comparisons");
   var convSharingNodes = createConversationSharingNodes(comparisonTableData.uniquenessNodes);
   var numOfSharedNodes = createComparisonUniquenessTable(comparisonTableData.uniqueness);
   var numOfNodes = createComparisonNodeIpTpTable(comparisonTableData.nodeIpTp);
@@ -531,6 +553,7 @@ var drawGraph = function(dataObject){
   globalGraph = g;
   convDrawn = totalTpIpArray.length;
   console.log(comparisonTableData);
+  progress("pies");
   let chart1 = displayPieChar(numOfNodes.data, numOfNodes.options, "piechart-1", rainbows.nodesRainbow, undefined);
   let chart2 = displayPieChar(numOfSharedNodes.data, numOfSharedNodes.options, "piechart-2", sharedNodesRainbow, undefined);
   let chart3 = displayPieChar(convSharingNodes.data, convSharingNodes.options, "piechart-3", rainbows.pieChartRainbow, comparisonTableData.uniquenessNodes);
@@ -552,7 +575,10 @@ var drawGraph = function(dataObject){
   google.visualization.events.addListener(chart2, "select", function(){eventHandlerPieCharts(chart2, google.visualization.arrayToDataTable(numOfSharedNodes.data))})
   // google.visualization.events.addListener(chart3, "select", function(){eventHandlerPieCharts(chart3, google.visualization.arrayToDataTable(convSharingNodes.data),rainbows.pieChartRainbow)})
   // console.log(c);
+
+  progress("rendering");
   renderSvg(g, "svg#restalk", rainbows.dynamicPieChartRainbow, comparisonTableData.uniquenessNodes, comparisonTableData.nodeIpTp);
+  progress();
 }
 var setStyleShared = function(rainbow){
   var sheet;
@@ -657,5 +683,24 @@ var renderSvg = function(g, clazz, rainbow, rules, convSize){
     return chart;
   }
   // google.charts.load('visualization', '1.0', {packages: ['corechart', 'table', 'controls', 'gauge']});
+
+  var progress = function(status,i,max) {
+    
+    if (status) document.getElementById("status").innerHTML = status;
+    if (i) document.getElementById("progress").value = i;
+    if (max) document.getElementById("progress").max = max;
+
+    if (status || i || max) {
+      document.getElementById("status").style.display = "block";
+      document.getElementById("progress").style.display = "block";
+    } else {
+      document.getElementById("status").style.display = "none";
+      document.getElementById("progress").style.display = "none";
+    }
+
+    i = document.getElementById("progress").value;
+    max = document.getElementById("progress").max;
+    console.log("progress: "+status+" ("+i+"/"+max+")");
+  }
   </script>
   </html>
