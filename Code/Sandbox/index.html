@@ -30,7 +30,7 @@
 
   <body>
     <div style="display: block">
-      <div id="Container" style="display: flex; justify-content: space-between; width: 50vw;">
+      <div id="Container" style="display: flex; justify-content: space-around; width: 50vw;">
         <button onclick="goBack()">Go Back</button>
         <div id="Clients">
           <select id="multiSelect-Clients" multiple="multiple" onchange="changeTp()">
@@ -40,7 +40,7 @@
         <select id="multiSelect" multiple="multiple">
         </select>
         
-        <div id="Btns" style="display: flex; flex-direction: column;">
+        <div id="Btns" style="display: flex; flex-direction: column; justify-content: center;">
           <button id="multiSelectForm" type="submit"/> Draw </button>
           <progress id="progress" style="display: none";></progress>
           <p id="status" style="display: none";></p>
@@ -85,8 +85,8 @@
       <!-- <svg width="200px" height="200px"></svg> -->
     </div>
     <div style="display: flex" id="bigcontainer">
-      <svg id="restalk"> </svg>
-      <div id="smallContainer" style="display: flex">
+      <svg id="restalk" style="flex: 3; resize: horizontal;"> </svg>
+      <div id="smallContainer" style="display: flex; flex: 1">
         <div id="pieCharts" style="display: block;">
           <div id="piechart-1">
           </div>
@@ -98,7 +98,7 @@
           </div>
           <!-- <svg id="vizPattern"> </svg> -->
         </div>
-        <svg id="vizPattern"> </svg>
+        <svg id="vizPattern" style="flex: 1; resize: horizontal;"> </svg>
       </div>
     </div>
   </div>
