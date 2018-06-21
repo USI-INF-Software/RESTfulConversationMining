@@ -1,0 +1,17 @@
+{
+  "name": "restalk-miner",
+  "version": "1.0.0",
+  "description": "this.nodes = { \"DELETE/poll/1\" : { 200 : [\"Node1\", \"Node2\"], 204 : [\"Node1\", \"Node 2\"]}, \"GET/poll/1/vote\" : {200 : [\"Node1\", \"Node2\", \"Node3\"], 410: [\"Node1\"]}, \"POST/poll/1\": {201 : [\"Node1\"]} }",
+  "main": "Parser.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dagre": "^0.8.2",
+    "dagre-d3": "^0.6.1",
+    "fs": "0.0.1-security",
+    "route-parser": "0.0.5"
+  }
+}
