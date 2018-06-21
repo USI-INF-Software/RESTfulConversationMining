@@ -36,7 +36,8 @@ var conversionPath = function(class_prefix, size, totalTpIpArray, data){
   createPieChartColors(pieChartRainbow, data);
   let combinations = getCombinations(totalTpIpArray);
   console.log(combinations.length);
-  for(let i = 0; i < combinations.length; i++){
+  //artificially limit this to 1000 rules or the browser will take too long!
+  for(let i = 0; i < Math.min(combinations.length,10000); i++){
     let subComb = combinations[i].split(',');
     subComb.reverse();
     let color =  hexToRgb(rainbow[subComb[0]]);
