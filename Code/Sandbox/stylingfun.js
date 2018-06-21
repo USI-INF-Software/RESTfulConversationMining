@@ -35,6 +35,7 @@ var conversionPath = function(class_prefix, size, totalTpIpArray, data){
   }
   createPieChartColors(pieChartRainbow, data);
   let combinations = getCombinations(totalTpIpArray);
+  console.log(combinations.length);
   for(let i = 0; i < combinations.length; i++){
     let subComb = combinations[i].split(',');
     subComb.reverse();
