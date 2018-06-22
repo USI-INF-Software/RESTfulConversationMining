@@ -367,11 +367,14 @@ var multipleIncomingXorSetUp = function(g, nodes, key, inXorIdSize, maxDelay, mi
         }
         var getProbabilityLabel = function(nodes, s1, s2, length){
           if(s1.includes("start")) return '';
-          s1 =  s1.split('-')
-          if(s1.length > 1) s1 = s1[1];
-          else s1 = s1[0];
+          let newKey =  s1.split('-');
+          var mainS;
+          if(newKey[0] == "XOR"){
+            mainS = newKey[1];
+          }
+          else mainS = s1;
     
-          let p = getProbability(nodes, s1, s2, length);
+          let p = getProbability(nodes, mainS, s2, length);
           if(p == 100) p = '';
           else p = p+'%';
           return p;
