@@ -241,13 +241,22 @@ function getPattern(e){
   {
     console.log(file.files);
     var reader = new FileReader();
+    // using the file name as the name for the added pattern
+    var name = file.files[0].name.split(".")[0];
+    //console.log(name);
 
     reader.onload = function(e)
     {
       pattern = e.target.result;
-      pattern = pattern.split("\n");
-      console.log(pattern);
+      //pattern = pattern.split("\n");
+      pattern = JSON.parse(pattern);
+      //console.log(pattern);
       // hasPattern(g, globalNodes, patternMixed, false, convDrawn);
+      //adding the pattern to the in cash memory of the patterns list 
+      user_select_patterns[name] = pattern;
+      console.log(pattern);
+      //adding the pattern to the dropdown menu
+      displayPatterns()
     }
     for(let i = 0; i < file.files.length; i++){
       reader.readAsText(file.files[i]);
