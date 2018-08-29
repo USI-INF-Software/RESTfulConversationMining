@@ -84,39 +84,43 @@ text {
 
 .dropdown:hover .dropbtn {
     background-color: #3e8e41;
+    padding: 3px;
 }
 #bigcontainer{
   position: relative;
   border: 1px solid #999;
   top: 80px;
 }
-/* svg{
-  position: relative;
-  top: 200px;
-} */
-svg#restalk {
+#restalk {
   flex-grow: 1;
-  height: 800px;
   border: 1px solid #999;
   overflow: hidden;
+  margin: 1px;
 }
 svg#vizPattern {
   flex-grow: 1;
-  border: 1px solid #999;
+  border: 1px dotted #999;
   height: 85%;
+  margin: 1px;
 }
-#someContainer{
+#smallContainer{
   flex-grow: 1;
-  border: 1px solid #999;
+  border: 1px dotted #999;
+  margin: 1px;
 }
 #PatternContainer{
   border: 1px solid #999;
   position: absolute;
   right: 0;
+  margin: 1px;
+  margin-top: -3px;
+  padding: 2px;
 }
 #Container{
   border: 1px solid #999;
-  right: 0;
+  left: 0;
+  margin: 1px;
+  padding: 2px;
 }
 table {
     font-family: arial, sans-serif;
