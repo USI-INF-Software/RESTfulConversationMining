@@ -114,6 +114,10 @@ svg#vizPattern {
   position: absolute;
   right: 0;
 }
+#Container{
+  border: 1px solid #999;
+  right: 0;
+}
 table {
     font-family: arial, sans-serif;
     border-collapse: collapse;

@@ -27,24 +27,41 @@
   <script src="drawG.js"></script>
   <!-- <script type="text/javascript" src="setup.js"></script> -->
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+  .btn {
+    background-color: White;
+    border: none;
+    color: black;
+    padding: 12px 16px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  </style>
+
 
   <body>
-    <div style="display: flex; flex-direction: column; height: 100vh">
-      <div id="Container" style="display: flex; justify-content: space-around; width: 50vw;">
-        <button onclick="goBack()">Go Back</button>
+    <div style="display: flex; flex-direction: column; height: 100vh; width 100wh">
+      <button class="btn" onclick="goBack()"><i class="fa fa-home"></i>Home</button>
+      <div id="Container" style="display: flex; justify-content: space-between; width: 50vw;">
         <div id="Clients">
+          <h4 style="color: blue">Mining</h4> <br />
           <select id="multiSelect-Clients" multiple="multiple" onchange="changeTp()">
-          </select>
+          <optgroup label="Select IP addresses"></optgroup>
+          </select> <br />
+          <button id="multiSelectForm" type="submit"/> Draw Graph</button>
+          <progress id="progress" style="display: none";></progress>
+          <p id="status" style="display: none";></p>
           <!-- <button class="dropbtn" onmouseover="displayClients()">Clients</button> -->
         </div>
         <select id="multiSelect" multiple="multiple">
         </select>
-        
+        <!-- 
         <div id="Btns" style="display: flex; flex-direction: column; justify-content: center;">
-          <button id="multiSelectForm" type="submit"/> Draw </button>
+          <button id="multiSelectForm" type="submit"/> Draw Graph</button>
           <progress id="progress" style="display: none";></progress>
           <p id="status" style="display: none";></p>
-        </div>
+        </div>-->
         <div id="VisualizationConfig" style="display: none">
           Node Frequency Coloring: <input type="checkbox" id="nfc" onclick="myFunction()"> <br />
           Edge Frequency Thickness: <input type="checkbox" id="eft" onclick="myFunction1()"> <br />
@@ -56,12 +73,13 @@
           <input type="button" value="Add a Pattern" onclick="document.getElementById('dataId').click();" />
           <input type="submit" />
         </form> -->
-      </div>
-      <div id="PatternContainer"style="display: flex; width: 50vw;">
+        </div>
+      <div id="PatternContainer" style="display: flex; justify-content: space-between; width: 50vw;">
         <div id="CandidatePatternMenu" style="display: block">
+          <h4 style="color: blue">Pattern Discovery</h4> <br />
           <form id="formCandidatePatterns" onsubmit="generateCP()" style="display: block">
             <input id="candidateLength" type="number" value="2" min="2" style="display: block">
-            <label for=candidateLength> Candidate Length</label>
+            <label for=candidateLength> Candidate Pattern Length</label>
             <input id="shareLvl" type="number" value="2" min="2" style="display: block">
             <label for="shareLvl"> Share Threshold</label>
             <input id="candidateSubmit" value="Generate Candidate Patterns" type="submit" style="display: block">
@@ -70,6 +88,7 @@
           </div>
         </div>
         <div id="patternMenu">
+          <h4 style="color: blue">Pattern Matching</h4> <br />
           <form  id="formId" onsubmit="getPattern">
             <input type="file" name="fname" id="dataId" style="display: none;">
             <input type="button" value="Add a Pattern" onclick="document.getElementById('dataId').click();" />
@@ -146,6 +165,12 @@ var generateCP = function (e){
       globalCandidatePatterns = nodesViz;
       let elem = document.createElement("select");
       elem.setAttribute("id", "candidatePatternsList");
+      let opt = document.createElement("option");
+      opt.setAttribute("selected","");
+      opt.setAttribute("disabled","");
+      let text=document.createTextNode("Select candidate pattern");
+      opt.appendChild(text);
+      elem.appendChild(opt);
       for(let i = 0; i < nodesViz.length; i++){
         let option = document.createElement("option");
         let linkText = document.createTextNode("Candidate Pattern "+i);
@@ -443,7 +468,7 @@ var displayTimePeriods = function(client){
   var el = document.getElementById("multiSelect");
   var form = document.getElementById("multiSelectForm");
   var timePeriods = differenceThreshold(client);
-  var str = "";
+  var str = "<optgroup label='Select Time Periods'>";
   for(let i = 0; i < timePeriods.length; i++){
     str += '<option value=\''+i+'\'> Time Period '+ i + '</option>'
   }
