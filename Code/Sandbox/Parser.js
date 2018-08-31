@@ -37,6 +37,7 @@ var readParseURLRouteFile = function(links, routes){
       routes.forEach(function(r) {
         if (r.match(url)) {
           url = r.spec;
+          url=url.replace(/\:/g,'');
         }
       })
 
@@ -158,9 +159,9 @@ sequentialParser = createData(links, undefined, readParseFile);
 flatParser = createData(links, undefined, flatProcessingOfFile);
 // console.log(parseRouteData);
 var data = {};
-data.IgnoredURI = flatParser;
-data.FullURI = sequentialParser;
-data.TemplateURI = parseRouteData;
+data.IgnoreURIs = flatParser;
+data.FullURIs = sequentialParser;
+data.TemplateURIs = parseRouteData;
 // Save Data into the data.js file.
 // console.log(data);
 var filepath = "data.js"
