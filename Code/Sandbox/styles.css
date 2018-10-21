@@ -84,17 +84,12 @@ text {
 
 .dropdown:hover .dropbtn {
     background-color: #3e8e41;
-<<<<<<< HEAD
-=======
-    padding: 3px;
->>>>>>> 3eafe5dd7ba5d9203055683ae80319a0126755ea
 }
 #bigcontainer{
   position: relative;
   border: 1px solid #999;
   top: 80px;
 }
-<<<<<<< HEAD
 /* svg{
   position: relative;
   top: 200px;
@@ -113,41 +108,11 @@ svg#vizPattern {
 #someContainer{
   flex-grow: 1;
   border: 1px solid #999;
-=======
-#restalk {
-  flex-grow: 1;
-  border: 1px solid #999;
-  overflow: hidden;
-  margin: 1px;
-}
-svg#vizPattern {
-  flex-grow: 1;
-  border: 1px dotted #999;
-  height: 85%;
-  margin: 1px;
-}
-#smallContainer{
-  flex-grow: 1;
-  border: 1px dotted #999;
-  margin: 1px;
->>>>>>> 3eafe5dd7ba5d9203055683ae80319a0126755ea
 }
 #PatternContainer{
   border: 1px solid #999;
   position: absolute;
   right: 0;
-<<<<<<< HEAD
-=======
-  margin: 1px;
-  margin-top: -3px;
-  padding: 2px;
-}
-#Container{
-  border: 1px solid #999;
-  left: 0;
-  margin: 1px;
-  padding: 2px;
->>>>>>> 3eafe5dd7ba5d9203055683ae80319a0126755ea
 }
 table {
     font-family: arial, sans-serif;
