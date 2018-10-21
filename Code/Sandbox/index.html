@@ -51,6 +51,7 @@
           Edge Delay Coloring: <input type="checkbox" id="edc" onclick="myFunction2()"> <br />
           Show Edge Probability: <input type="checkbox" id="sep" onclick="myFunction3()"> <br />
           Status Coloring: <input type="checkbox" id="statusColoring"> <br />
+          Method Coloring: <input type="checkbox" id="methodColoring"> <br />
           <!-- <form  id="formId" onsubmit="getPattern()">
           <input type="file" name="fname" id="dataId" style="display: none;">
           <input type="button" value="Add a Pattern" onclick="document.getElementById('dataId').click();" />
@@ -231,7 +232,9 @@ var generatePattern = function(pattern, size){
     }
   }
 }
-google.charts.load('current', {'packages':['corechart']});
+
+if (google)
+  google.charts.load('current', {'packages':['corechart']});
 // google.charts.setOnLoadCallback(createPieChart);
 // Input related code goes here
 function getPattern(e){
