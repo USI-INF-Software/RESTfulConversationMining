@@ -280,6 +280,14 @@ $(document).ready(function(){
 var displayPatterns = function(){
   var div = document.getElementById("predefinedPatterns");
   while(div.hasChildNodes()) div.removeChild(div.childNodes[0])
+
+  let opt = document.createElement("option");
+  opt.setAttribute("selected","");
+  opt.setAttribute("disabled","");
+  let text=document.createTextNode("Select a pattern");
+  opt.appendChild(text);
+  div.appendChild(opt);
+
   for(let pattern in user_select_patterns){
     let obj = user_select_patterns[pattern];
     let option = document.createElement("option");
@@ -333,8 +341,8 @@ var clearPatternMenu = function(){
   let x = document.getElementsByTagName("STYLE");
   let btn1 = document.createElement("BUTTON");
   let btn3 = document.createElement("BUTTON");
-  let txt1 = document.createTextNode("Visualize");
-  let txt3 = document.createTextNode("Search Whole Graph");
+  let txt1 = document.createTextNode("Visualize Selected Pattern");
+  let txt3 = document.createTextNode("Search Graph");
   btn1.onclick = vizPattern;
   btn3.onclick = hasPatternClick;
   btn1.appendChild(txt1);

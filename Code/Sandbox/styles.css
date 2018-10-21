@@ -86,9 +86,7 @@ text {
     background-color: #3e8e41;
 }
 #bigcontainer{
-  position: relative;
-  border: 1px solid #999;
-  top: 80px;
+  margin-top: 10px;
 }
 /* svg{
   position: relative;
@@ -102,12 +100,13 @@ svg#restalk {
 }
 svg#vizPattern {
   flex-grow: 1;
-  border: 1px solid #999;
-  height: 85%;
+  border: 1px dotted #999;
 }
-#someContainer{
+#smallContainer{
   flex-grow: 1;
-  border: 1px solid #999;
+  border: 1px dotted #999;
+  margin: 1px;
+  text-align: center;
 }
 
 table {
