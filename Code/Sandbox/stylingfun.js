@@ -3,8 +3,10 @@ var getClassForNode = function(word, patternClazz, nodes, key, status, response)
   var _word = word.split(" ");
   let shared = _word.length - 1;
   var clazz;
-  if(!response) clazz = "type-Request method-"+key+' '+status + ' ' + patternClazz + ' ' + word + ' ' + "status-"+status + " shared-" + shared;
-  else clazz = "type-Response method-"+key+' '+status + ' ' + patternClazz + ' ' + word + ' ' + "status-"+status + " shared-" + shared;
+  console.log(key);
+  var method = key.split("/")[0];
+  if(!response) clazz = "type-Request key-"+key+' method-'+method+' '+status + ' ' + patternClazz + ' ' + word + ' ' + "status-"+status + " shared-" + shared;
+  else clazz = "type-Response key-"+key+' method-'+method+' '+status + ' ' + patternClazz + ' ' + word + ' ' + "status-"+status + " shared-" + shared;
   return clazz
 }
 var disableConversionPaths = function(){
@@ -268,8 +270,17 @@ var setStatusColoring = function(statusObj, class_prefix, sheet){
     i++;
   }
 }
+var setMethodColoring = function(methodArray, class_prefix, sheet){
+  var size = methodArray.length;
+  var rainbow = createRainbow(size);
+  methodArray.forEach((m,i) => {
+    var st = "fill: "+rainbow[i];
+    var clazz = "."+class_prefix+"-"+m;
+    sheet.insertRule(clazz+" { "+st+" }");
+  })
+}
 var setStyles = function(){
-  for(let i = 0; i < 6; i++){
+  for(let i = 0; i < 7; i++){
     let style = document.createElement('style')
 
     style.disabled = true;
@@ -297,7 +308,7 @@ var setEdgeProbabilityStyle = function(elem, class_prefix, sheet){
     }
   };
 }
-var setVisualizationConfig = function(nfc, eft, edc, sep, statusColoring, maxRequests, statusObj){
+var setVisualizationConfig = function(nfc, eft, edc, sep, statusColoring, maxRequests, statusObj, method){
   var VisualizationConfig = document.getElementById("VisualizationConfig");
   var red = [255,0,0];
   var yellow = [255,255,0];
@@ -311,6 +322,10 @@ var setVisualizationConfig = function(nfc, eft, edc, sep, statusColoring, maxReq
   setElementOnClick(eft, 1);
   setElementOnClick(edc, 2);
   setElementOnClick(statusColoring, 4);
+  if (method) {
+    setMethodColoring(method.Obj, "method", document.getElementsByTagName("STYLE")[6].sheet);
+    setElementOnClick(method.element, 6);
+  }
   VisualizationConfig.style = "diplay: visible;"
 }
 var setElementOnClick = function(elem, index){

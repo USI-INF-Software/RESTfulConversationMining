@@ -56,6 +56,7 @@
           Edge Delay Coloring: <input type="checkbox" id="edc" onclick="myFunction2()"> <br />
           Show Edge Probability: <input type="checkbox" id="sep" onclick="myFunction3()"> <br />
           Status Coloring: <input type="checkbox" id="statusColoring"> <br />
+          Method Coloring: <input type="checkbox" id="methodColoring"> <br />
           <!-- <form  id="formId" onsubmit="getPattern()">
           <input type="file" name="fname" id="dataId" style="display: none;">
           <input type="button" value="Add a Pattern" onclick="document.getElementById('dataId').click();" />
@@ -490,6 +491,7 @@ var drawGraph = function(dataObject){
   var edc = document.getElementById("edc");
   var sep = document.getElementById("sep");
   var statusColoring = document.getElementById("statusColoring");
+  var methodColoring = document.getElementById("methodColoring");
 
   fixVisualizationConfig(nfc, eft, edc, sep, statusColoring);
   // Here we"re setting nodeclass, which is used by our custom drawNodes function
@@ -553,7 +555,7 @@ var drawGraph = function(dataObject){
   setNodeClasses(g, nodes, totalRequestsData);
 
   progress("visualization config");
-  setVisualizationConfig(nfc, eft, edc, sep, statusColoring, maxRequests, statusObj);
+  setVisualizationConfig(nfc, eft, edc, sep, statusColoring, maxRequests, statusObj, {element: methodColoring, Obj: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]});
   // triggerEdgeProbability(sep);
 
   //this seems to be the bottleneck!
@@ -621,7 +623,7 @@ var renderSvg = function(g, clazz, rainbow, rules, convSize){
   // Run the renderer. This is what draws the final graph.
   render(inner, g);
   // Center the graph
-  var initialScale = 0.2;
+  var initialScale = 1;
   svg.call(zoom.transform, d3.zoomIdentity.translate((svg.attr("width") - g.graph().width * initialScale) / 2, 20).scale(initialScale));
   svg.selectAll("g.node.start").on("click", function(id) { var _node = g.node(id);
     var n = id.split("start-")[1];
@@ -680,6 +682,11 @@ var renderSvg = function(g, clazz, rainbow, rules, convSize){
     return obj;
   }
   function displayPieChar(arr, options, id, rainbow, rules){
+    if (!google) {
+      document.getElementById(id).innerHTML = "<p class='error'>Cannot load google charts</p>";
+      return;
+    }
+
     data = google.visualization.arrayToDataTable(arr);
     if(id === "piechart-3" || id == "piechart-4"){
       options.colors = []
