@@ -37,6 +37,8 @@ var readParseURLRouteFile = function(links, routes){
       routes.forEach(function(r) {
         if (r.match(url)) {
           url = r.spec;
+          //remove : character which will interfere later with the way urls are indexed
+          url=url.replace(/\:/g,'');
         }
       })
 
@@ -158,9 +160,15 @@ sequentialParser = createData(links, undefined, readParseFile);
 flatParser = createData(links, undefined, flatProcessingOfFile);
 // console.log(parseRouteData);
 var data = {};
+<<<<<<< HEAD
 data.FlatData = flatParser;
 data.ParseRouteData = parseRouteData;
 data.SequentialData = sequentialParser;
+=======
+data.IgnoreURIs = flatParser;
+data.FullURIs = sequentialParser;
+data.TemplateURIs = parseRouteData;
+>>>>>>> 3eafe5dd7ba5d9203055683ae80319a0126755ea
 // Save Data into the data.js file.
 // console.log(data);
 var filepath = "data.js"

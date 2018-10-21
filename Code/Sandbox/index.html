@@ -27,6 +27,7 @@
   <script src="drawG.js"></script>
   <!-- <script type="text/javascript" src="setup.js"></script> -->
   <link rel="stylesheet" href="styles.css">
+<<<<<<< HEAD
 
   <body>
     <div style="display: flex; flex-direction: column; height: 100vh">
@@ -35,10 +36,38 @@
         <div id="Clients">
           <select id="multiSelect-Clients" multiple="multiple" onchange="changeTp()">
           </select>
+=======
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+  .btn {
+    background-color: White;
+    border: none;
+    color: black;
+    padding: 12px 16px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  </style>
+
+
+  <body>
+    <div style="display: flex; flex-direction: column; height: 100vh; width 100wh">
+      <button class="btn" onclick="goBack()"><i class="fa fa-home"></i>Home</button>
+      <div id="Container" style="display: flex; justify-content: space-between; width: 50vw;">
+        <div id="Clients">
+          <h4 style="color: blue">Mining</h4>
+          <select id="multiSelect-Clients" multiple="multiple" onchange="changeTp()" style="margin:3px">
+          <optgroup label="Select IP addresses"></optgroup>
+          </select> <br />
+          <button id="multiSelectForm" type="submit" style="margin:3px; font-weight: bold"/> Draw Graph</button>
+          <progress id="progress" style="display: none";></progress>
+          <p id="status" style="display: none";></p>
+>>>>>>> 3eafe5dd7ba5d9203055683ae80319a0126755ea
           <!-- <button class="dropbtn" onmouseover="displayClients()">Clients</button> -->
         </div>
         <select id="multiSelect" multiple="multiple">
         </select>
+<<<<<<< HEAD
         
         <div id="Btns" style="display: flex; flex-direction: column; justify-content: center;">
           <button id="multiSelectForm" type="submit"/> Draw </button>
@@ -52,11 +81,26 @@
           Show Edge Probability: <input type="checkbox" id="sep" onclick="myFunction3()"> <br />
           Status Coloring: <input type="checkbox" id="statusColoring"> <br />
           Method Coloring: <input type="checkbox" id="methodColoring"> <br />
+=======
+        <!-- 
+        <div id="Btns" style="display: flex; flex-direction: column; justify-content: center;">
+          <button id="multiSelectForm" type="submit"/> Draw Graph</button>
+          <progress id="progress" style="display: none";></progress>
+          <p id="status" style="display: none";></p>
+        </div>-->
+        <div id="VisualizationConfig" style="display">
+          Status Coloring: <input type="checkbox" id="statusColoring"> <br />
+          Node Frequency Coloring: <input type="checkbox" id="nfc" onclick="myFunction()"> <br /> <br />
+          Edge Frequency Thickness: <input type="checkbox" id="eft" onclick="myFunction1()"> <br /> 
+          Edge Delay Coloring: <input type="checkbox" id="edc" onclick="myFunction2()"> <br /> <br />
+          Show Edge Probability: <input type="checkbox" id="sep" onclick="myFunction3()"> <br />
+>>>>>>> 3eafe5dd7ba5d9203055683ae80319a0126755ea
           <!-- <form  id="formId" onsubmit="getPattern()">
           <input type="file" name="fname" id="dataId" style="display: none;">
           <input type="button" value="Add a Pattern" onclick="document.getElementById('dataId').click();" />
           <input type="submit" />
         </form> -->
+<<<<<<< HEAD
       </div>
       <div id="PatternContainer"style="display: flex; width: 50vw;">
         <div id="CandidatePatternMenu" style="display: block">
@@ -66,11 +110,24 @@
             <input id="shareLvl" type="number" value="2" min="2" style="display: block">
             <label for="shareLvl"> Share Threshold</label>
             <input id="candidateSubmit" value="Generate Candidate Patterns" type="submit" style="display: block">
+=======
+        </div>
+      <div id="PatternContainer" style="display: flex; justify-content: space-between; width: 49vw;">
+        <div id="CandidatePatternMenu" style="display: block">
+          <h4 style="color: blue">Pattern Discovery</h4> 
+          <form id="formCandidatePatterns" onsubmit="generateCP()" style="display: block">
+            <input id="candidateLength" type="number" value="2" min="2" style="display: block">
+            <label style="font-weight:normal" for=candidateLength> Candidate Pattern Length</label>
+            <input id="shareLvl" type="number" value="2" min="2" style="display: block">
+            <label style="font-weight:normal" for="shareLvl"> Share Threshold</label>
+            <input id="candidateSubmit" value="Generate Candidate Patterns" type="submit" style="display: block; font-weight: bold">
+>>>>>>> 3eafe5dd7ba5d9203055683ae80319a0126755ea
           </form>
           <div id="predefinedCandidatePatterns" style="display: block">
           </div>
         </div>
         <div id="patternMenu">
+<<<<<<< HEAD
           <form  id="formId" onsubmit="getPattern">
             <input type="file" name="fname" id="dataId" style="display: none;">
             <input type="button" value="Add a Pattern" onclick="document.getElementById('dataId').click();" />
@@ -80,12 +137,25 @@
           <div id=patternButtons style="display: block">
             <button id="visualizePattern" onclick="visualizePattern()"> Visualize </button>
             <button id="wholeGraphSearch" onclick="hasPatternClick()">Whole Graph Search</button>
+=======
+          <h4 style="color: blue">Pattern Matching</h4>
+          <form  id="formId" onsubmit="getPattern">
+            <input type="file" name="fname" id="dataId" style="display: none;">
+            <input type="button" value="Add a Pattern" onclick="document.getElementById('dataId').click();" style="margin:3px" />
+            <input type="submit" style="margin:3px"/>
+          </form>
+          <select id="predefinedPatterns" style="margin:3px"></select>
+          <div id=patternButtons style="display: block">
+            <button id="visualizePattern" onclick="visualizePattern()" style="margin:3px"> Visualize Selected Pattern</button>
+            <button id="wholeGraphSearch" onclick="hasPatternClick()" style="margin:3px; font-weight: bold">Search Graph</button>
+>>>>>>> 3eafe5dd7ba5d9203055683ae80319a0126755ea
           </div>
         </div>
       </div>
       <!-- <svg width="200px" height="200px"></svg> -->
     </div>
     <div style="display: flex; flex: 1;" id="bigcontainer">
+<<<<<<< HEAD
       <svg id="restalk" style="flex: 3; resize: horizontal; height: 100%"> </svg>
       <div id="smallContainer" style="display: flex; flex: 1">
         <div id="pieCharts" style="display: block;">
@@ -99,6 +169,22 @@
           </div>
           <!-- <svg id="vizPattern"> </svg> -->
         </div>
+=======
+      <svg id="restalk" style="flex:3; resize: horizontal; height: 100%"> </svg>
+      <div id="smallContainer" style="display: flex; flex: 1">
+        <h4 style="padding:2px">Statistics</h4> 
+        <div id="pieCharts" style="display: block;">
+          <br /> <br /> 
+          <div id="piechart-1"></div>
+          <div id="piechart-2"></div>
+          <div id="piechart-3"></div>
+          <div id="piechart-4"></div>
+          <!-- <svg id="vizPattern"> </svg> -->
+        </div>
+      </div>
+      <div>
+        <h4 style="padding:2px">Pattern Visualization</h4>
+>>>>>>> 3eafe5dd7ba5d9203055683ae80319a0126755ea
         <svg id="vizPattern" style="flex: 1; resize: horizontal;"> </svg>
       </div>
     </div>
@@ -147,6 +233,15 @@ var generateCP = function (e){
       globalCandidatePatterns = nodesViz;
       let elem = document.createElement("select");
       elem.setAttribute("id", "candidatePatternsList");
+<<<<<<< HEAD
+=======
+      let opt = document.createElement("option");
+      opt.setAttribute("selected","");
+      opt.setAttribute("disabled","");
+      let text=document.createTextNode("Select candidate pattern");
+      opt.appendChild(text);
+      elem.appendChild(opt);
+>>>>>>> 3eafe5dd7ba5d9203055683ae80319a0126755ea
       for(let i = 0; i < nodesViz.length; i++){
         let option = document.createElement("option");
         let linkText = document.createTextNode("Candidate Pattern "+i);
@@ -163,6 +258,10 @@ var generateCP = function (e){
       btn1.appendChild(linkText1);
       btn.setAttribute("id", "visualizeCandidatePattern");
       btn1.setAttribute("id", "saveCandidatePattern");
+<<<<<<< HEAD
+=======
+      btn1.setAttribute("style", "margin:3px");
+>>>>>>> 3eafe5dd7ba5d9203055683ae80319a0126755ea
       btn.onclick = function(){
         vizCandidatePattern();
       }
@@ -232,9 +331,13 @@ var generatePattern = function(pattern, size){
     }
   }
 }
+<<<<<<< HEAD
 
 if (google)
   google.charts.load('current', {'packages':['corechart']});
+=======
+google.charts.load('current', {'packages':['corechart']});
+>>>>>>> 3eafe5dd7ba5d9203055683ae80319a0126755ea
 // google.charts.setOnLoadCallback(createPieChart);
 // Input related code goes here
 function getPattern(e){
@@ -244,13 +347,31 @@ function getPattern(e){
   {
     console.log(file.files);
     var reader = new FileReader();
+<<<<<<< HEAD
+=======
+    // using the file name as the name for the added pattern
+    var name = file.files[0].name.split(".")[0];
+    //console.log(name);
+>>>>>>> 3eafe5dd7ba5d9203055683ae80319a0126755ea
 
     reader.onload = function(e)
     {
       pattern = e.target.result;
+<<<<<<< HEAD
       pattern = pattern.split("\n");
       console.log(pattern);
       // hasPattern(g, globalNodes, patternMixed, false, convDrawn);
+=======
+      //pattern = pattern.split("\n");
+      pattern = JSON.parse(pattern);
+      //console.log(pattern);
+      // hasPattern(g, globalNodes, patternMixed, false, convDrawn);
+      //adding the pattern to the in cash memory of the patterns list 
+      user_select_patterns[name] = pattern;
+      console.log(pattern);
+      //adding the pattern to the dropdown menu
+      displayPatterns()
+>>>>>>> 3eafe5dd7ba5d9203055683ae80319a0126755ea
     }
     for(let i = 0; i < file.files.length; i++){
       reader.readAsText(file.files[i]);
@@ -266,6 +387,15 @@ $(document).ready(function(){
 var displayPatterns = function(){
   var div = document.getElementById("predefinedPatterns");
   while(div.hasChildNodes()) div.removeChild(div.childNodes[0])
+<<<<<<< HEAD
+=======
+  let opt = document.createElement("option");
+  opt.setAttribute("selected","");
+  opt.setAttribute("disabled","");
+  let text=document.createTextNode("Select a pattern");
+  opt.appendChild(text);
+  div.appendChild(opt);
+>>>>>>> 3eafe5dd7ba5d9203055683ae80319a0126755ea
   for(let pattern in user_select_patterns){
     let obj = user_select_patterns[pattern];
     let option = document.createElement("option");
@@ -319,13 +449,25 @@ var clearPatternMenu = function(){
   let x = document.getElementsByTagName("STYLE");
   let btn1 = document.createElement("BUTTON");
   let btn3 = document.createElement("BUTTON");
+<<<<<<< HEAD
   let txt1 = document.createTextNode("Visualize");
   let txt3 = document.createTextNode("Search Whole Graph");
+=======
+  let txt1 = document.createTextNode("Visualize Selected Pattern");
+  let txt3 = document.createTextNode("Search Graph");
+>>>>>>> 3eafe5dd7ba5d9203055683ae80319a0126755ea
   btn1.onclick = vizPattern;
   btn3.onclick = hasPatternClick;
   btn1.appendChild(txt1);
   btn1.setAttribute("id", "visualizePattern");
+<<<<<<< HEAD
   btn3.setAttribute("id", "wholeGraphSearch");
+=======
+  btn1.setAttribute("style", "margin:3px");
+  btn3.setAttribute("id", "wholeGraphSearch");
+  btn3.setAttribute("style", "margin:3px");
+  btn3.setAttribute("style", "font-weight:bold");
+>>>>>>> 3eafe5dd7ba5d9203055683ae80319a0126755ea
   btn3.appendChild(txt3);
   while(div.hasChildNodes()) div.removeChild(div.childNodes[0])
   div.appendChild(btn1);
@@ -437,7 +579,11 @@ var displayTimePeriods = function(client){
   var el = document.getElementById("multiSelect");
   var form = document.getElementById("multiSelectForm");
   var timePeriods = differenceThreshold(client);
+<<<<<<< HEAD
   var str = "";
+=======
+  var str = "<optgroup label='Select Time Periods'>";
+>>>>>>> 3eafe5dd7ba5d9203055683ae80319a0126755ea
   for(let i = 0; i < timePeriods.length; i++){
     str += '<option value=\''+i+'\'> Time Period '+ i + '</option>'
   }
@@ -450,6 +596,10 @@ var displayTimePeriods = function(client){
     if(Object.keys(ret1).length) drawGraph(ret1);
     else drawGraph(ret2);
   }
+<<<<<<< HEAD
+=======
+  //uncoment to get the time periods
+>>>>>>> 3eafe5dd7ba5d9203055683ae80319a0126755ea
   el.innerHTML = str;
 }
 var fixVisualizationConfig = function(nfc, eft, edc, sep, statusColoring){
@@ -608,7 +758,11 @@ var renderSvg = function(g, clazz, rainbow, rules, convSize){
   // Run the renderer. This is what draws the final graph.
   render(inner, g);
   // Center the graph
+<<<<<<< HEAD
   var initialScale = 0.2;
+=======
+  var initialScale = 0.5;
+>>>>>>> 3eafe5dd7ba5d9203055683ae80319a0126755ea
   svg.call(zoom.transform, d3.zoomIdentity.translate((svg.attr("width") - g.graph().width * initialScale) / 2, 20).scale(initialScale));
   svg.selectAll("g.node.start").on("click", function(id) { var _node = g.node(id);
     var n = id.split("start-")[1];
