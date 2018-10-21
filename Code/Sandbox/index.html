@@ -630,9 +630,34 @@ var renderSvg = function(g, clazz, rainbow, rules, convSize){
   var render = new dagreD3.render();
   // Run the renderer. This is what draws the final graph.
   render(inner, g);
-  // Center the graph
-  var initialScale = 1;
-  svg.call(zoom.transform, d3.zoomIdentity.translate((svg.attr("width") - g.graph().width * initialScale) / 2, 20).scale(initialScale));
+  // Center the graph (Fixed)
+
+  var dom_svg = document.querySelector(clazz);
+
+  // console.log("svg.width "+dom_svg.clientWidth);
+  // console.log("g.width "+g.graph().width);
+  // console.log("svg.height "+dom_svg.clientHeight);
+  // console.log("g.height "+g.graph().height);
+
+  var wRatio = dom_svg.clientWidth / g.graph().width;
+  var hRatio = dom_svg.clientHeight / g.graph().height;
+
+  // console.log("wRatio "+wRatio)
+  // console.log("hRatio "+hRatio)
+
+  var initialScale = (hRatio < wRatio ? hRatio : wRatio);
+
+  // console.log(initialScale);
+
+  var dx = dy = 0;
+
+  if (hRatio < wRatio) {
+    var dx = (dom_svg.clientWidth - g.graph().width) / 2;
+  } else {
+    var dy = (dom_svg.clientHeight - g.graph().height) / 2;
+  }
+  svg.call(zoom.transform, d3.zoomIdentity.translate(dx,dy).scale(initialScale));
+
   svg.selectAll("g.node.start").on("click", function(id) { var _node = g.node(id);
     var n = id.split("start-")[1];
     // console.log(document.body.classList);

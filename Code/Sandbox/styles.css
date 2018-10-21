@@ -146,7 +146,7 @@ button, input[type="submit"], input[type="button"] {
 
 button:hover, input[type="submit"]:hover, input[type="button"]:hover {
    background-color: white;
-   font-weight: bold;
+   color: blue;
 }
 
 h4 {color: blue;}
