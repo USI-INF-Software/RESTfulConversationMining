@@ -160,9 +160,9 @@ sequentialParser = createData(links, undefined, readParseFile);
 flatParser = createData(links, undefined, flatProcessingOfFile);
 // console.log(parseRouteData);
 var data = {};
-data.FlatData = flatParser;
-data.ParseRouteData = parseRouteData;
-data.SequentialData = sequentialParser;
+data.IgnoreURIs = flatParser;
+data.FullURIs = parseRouteData;
+data.TemplateURIs = sequentialParser;
 // Save Data into the data.js file.
 // console.log(data);
 var filepath = "data.js"
