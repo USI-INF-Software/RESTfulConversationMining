@@ -29,19 +29,24 @@
   <link rel="stylesheet" href="styles.css">
 
   <body>
-    <div style="display: flex; flex-direction: column; height: 100vh">
-      <div id="Container" style="display: flex; justify-content: space-around; width: 50vw;">
-        <button onclick="goBack()">Go Back</button>
-        <div id="Clients">
+    <div style="display: flex; flex-direction: column; height: 100vh; width: 100vw">
+      <button onclick="goBack()">Go Back</button>
+      <div id="Container" style="display: flex; justify-content: space-around">
+       <div style="flex: 1">
+        <h4>Conversation Mining</h4>
+        <div style="display: flex; justify-content: space-around; width: 50vw;">
+         <div id="Clients" style="display: flex; flex-direction: column">
           <select id="multiSelect-Clients" multiple="multiple" onchange="changeTp()">
           </select>
+          <label for="multiSelect-Clients">Client IDs</label>
           <!-- <button class="dropbtn" onmouseover="displayClients()">Clients</button> -->
-        </div>
-        <select id="multiSelect" multiple="multiple">
-        </select>
-        
+         </div>
+         <div style="display: flex; flex-direction: column">
+          <select id="multiSelect" multiple="multiple">
+          </select><label for="multiSelect">Time Intervals</label>
+         </div>
         <div id="Btns" style="display: flex; flex-direction: column; justify-content: center;">
-          <button id="multiSelectForm" type="submit"/> Draw </button>
+          <button id="multiSelectForm" type="submit"/> Draw Graph </button>
           <progress id="progress" style="display: none";></progress>
           <p id="status" style="display: none";></p>
         </div>
@@ -56,9 +61,12 @@
           <input type="button" value="Add a Pattern" onclick="document.getElementById('dataId').click();" />
           <input type="submit" />
         </form> -->
-      </div>
-      <div id="PatternContainer"style="display: flex; width: 50vw;">
-        <div id="CandidatePatternMenu" style="display: block">
+        </div>
+       </div>
+     </div> 
+      <div id="PatternContainer"style="display: flex">
+        <div id="CandidatePatternMenu" style="flex: 1">
+          <h4>Pattern Discovery</h4>
           <form id="formCandidatePatterns" onsubmit="generateCP()" style="display: block">
             <input id="candidateLength" type="number" value="2" min="2" style="display: block">
             <label for=candidateLength> Candidate Length</label>
@@ -69,7 +77,8 @@
           <div id="predefinedCandidatePatterns" style="display: block">
           </div>
         </div>
-        <div id="patternMenu">
+        <div id="patternMenu" style="flex: 1">
+          <h4>Pattern Matching</h4>
           <form  id="formId" onsubmit="getPattern">
             <input type="file" name="fname" id="dataId" style="display: none;">
             <input type="button" value="Add a Pattern" onclick="document.getElementById('dataId').click();" />
@@ -85,8 +94,12 @@
       <!-- <svg width="200px" height="200px"></svg> -->
     </div>
     <div style="display: flex; flex: 1;" id="bigcontainer">
-      <svg id="restalk" style="flex: 3; resize: horizontal; height: 100%"> </svg>
-      <div id="smallContainer" style="display: flex; flex: 1">
+      <div style="flex: 3;">
+        <h4>Reconstructed Conversation Model</h4>
+        <svg id="restalk" style="resize: horizontal; height: 100%; width: 100%"> </svg>
+      </div>
+      <div id="smallContainer" style="display: flex; flex: 1; flex-direction: column">
+        <h4>Statistics</h4>
         <div id="pieCharts" style="display: block;">
           <div id="piechart-1">
           </div>
@@ -98,7 +111,10 @@
           </div>
           <!-- <svg id="vizPattern"> </svg> -->
         </div>
-        <svg id="vizPattern" style="flex: 1; resize: horizontal;"> </svg>
+      </div>
+      <div style="display: flex; flex: 1; flex-direction: column">
+        <h4>Pattern Visualization</h4>
+        <svg id="vizPattern" style="resize: horizontal;"> </svg>
       </div>
     </div>
   </div>
