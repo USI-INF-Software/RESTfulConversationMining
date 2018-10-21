@@ -628,6 +628,27 @@ var renderSvg = function(g, clazz, rainbow, rules, convSize){
   svg.call(zoom);
   // Create the renderer
   var render = new dagreD3.render();
+
+  render.shapes().gateway = function(parent, bbox, node) {
+  var w = bbox.width,
+      h = bbox.height,
+      points = [
+        { x:   w/2, y: 0 },
+        { x:   -w/10,   y: h/2 },
+        { x:   w/2, y: h },
+        { x:   w*1.1,   y: h/2 }
+      ];
+      shapeSvg = parent.insert("polygon", ":first-child")
+        .attr("points", points.map(function(d) { return d.x + "," + d.y; }).join(" "))
+        .attr("transform", "translate(" + (-w/2) + "," + (-(h/2)) + ")");
+
+      node.intersect = function(point) {
+        return dagreD3.intersect.polygon(node, points, point);
+      };
+      console.log(shapeSvg);
+      return shapeSvg;
+  };
+
   // Run the renderer. This is what draws the final graph.
   render(inner, g);
   // Center the graph (Fixed)

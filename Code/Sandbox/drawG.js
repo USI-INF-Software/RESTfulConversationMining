@@ -31,7 +31,7 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
       let clazz = getClassForNode(word, patternClazz, nodes, key, "", false);
       let label = nodes[key][st].statusArray[0].key + '\n' + "(" + totalRequests[key] + ")";
       g.setNode(key, {shape: "rect", label: label, class: clazz});
-      g.setNode("middleXOR-"+key,{label: "XOR", shape: "diamond", class: "type-XOR middleXOR"});
+      g.setNode("middleXOR-"+key,{label: "X", shape: "gateway", class: "type-XOR middleXOR"});
       var str = "inXOR-"+key
       if(Object.keys(incomingXorNodes[key]).length > 1) g.setNode(str, {label: "XOR", shape: "diamond", class: "type-XOR incomingXOR"});
       for(var status in nodes[key]){
