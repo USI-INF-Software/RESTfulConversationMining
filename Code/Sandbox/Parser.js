@@ -37,6 +37,8 @@ var readParseURLRouteFile = function(links, routes){
       routes.forEach(function(r) {
         if (r.match(url)) {
           url = r.spec;
+          //remove : character which will interfere later with the way urls are indexed
+          url=url.replace(/\:/g,'');
         }
       })
 
