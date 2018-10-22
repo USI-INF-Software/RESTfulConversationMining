@@ -641,11 +641,14 @@ var renderSvg = function(g, clazz, rainbow, rules, convSize){
       shapeSvg = parent.insert("polygon", ":first-child")
         .attr("points", points.map(function(d) { return d.x + "," + d.y; }).join(" "))
         .attr("transform", "translate(" + (-w/2) + "," + (-(h/2)) + ")");
+      parent.insert("path", ":first-child")
+        .attr("d", "m 0,0 -15.3186,15.5721 -15.6816,-15.2071 -6.8582,7.1056 15.6149,15.1415 -15.2529,15.5052 7.062,6.9471 15.2966,-15.5498 15.6595,15.1852 6.8801,-7.1279 -15.5926,-15.1196 15.2529,-15.5052 -7.0621,-6.9471 z")
+        .attr("transform", "translate(6,-9) scale(0.4)");
 
       node.intersect = function(point) {
         return dagreD3.intersect.polygon(node, points, point);
       };
-      console.log(shapeSvg);
+
       return shapeSvg;
   };
 
