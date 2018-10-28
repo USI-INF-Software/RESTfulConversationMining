@@ -14,16 +14,18 @@ select {
 text {
   font-weight: 300;
   font-size: 14px;
-  fill: black;
   stroke: none;
 }
+
+.type-Request text,
+.type-Response text { fill: black; }
 
 
 /* This will work if the (N) is shown as the last tspan of the label */
 body.hideNodeFrequency .type-Request tspan:last-child,
 body.hideNodeFrequency .type-Response tspan:last-child
  {display: none;}
- 
+
 /* .node circle, */
 /* .node rect {
   fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1

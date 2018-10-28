@@ -668,8 +668,9 @@ var renderSvg = function(g, clazz, rainbow, rules, convSize){
   }
   svg.call(zoom.transform, d3.zoomIdentity.translate(dx,dy).scale(initialScale));
 
+  //both start and end nodes have the start class
   svg.selectAll("g.node.start").on("click", function(id) { var _node = g.node(id);
-    var n = id.split("start-")[1];
+    var n = id.split("start-")[1] || id.split("end-")[1];
     // console.log(document.body.classList);
     document.body.classList.toggle("enable-path-"+n);
     let arr = document.body.classList.value;
