@@ -13,10 +13,10 @@
   <link rel="stylesheet/less" type="text/css" href="bower_components/tyles.less" />
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+   --><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<!--   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+ -->  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <!-- <script src="firstData.js"></script> -->
   <!-- <script src="routesData.js"></script> -->
   <!-- <script src="data.js"></script> -->
@@ -52,12 +52,14 @@
           <p id="status" style="display: none";></p>
         </div>
         <div id="VisualizationConfig" style="display: none">
-          Node Frequency Coloring: <input type="checkbox" id="nfc" onclick="myFunction()"> <br />
-          Edge Frequency Thickness: <input type="checkbox" id="eft" onclick="myFunction1()"> <br />
-          Edge Delay Coloring: <input type="checkbox" id="edc" onclick="myFunction2()"> <br />
-          Show Edge Probability: <input type="checkbox" id="sep" onclick="myFunction3()"> <br />
+          Show Node Frequency: <input type="checkbox" id="nf" checked onclick="showNodeFrequency(this)"> <br />
+          Node Frequency Coloring: <input type="checkbox" id="nfc"> <br />
+          Edge Frequency Thickness: <input type="checkbox" id="eft"> <br />
+          Edge Delay Coloring: <input type="checkbox" id="edc"> <br />
+          Show Edge Probability: <input type="checkbox" id="sep"> <br />
           Status Coloring: <input type="checkbox" id="statusColoring"> <br />
           Method Coloring: <input type="checkbox" id="methodColoring"> <br />
+
           <!-- <form  id="formId" onsubmit="getPattern()">
           <input type="file" name="fname" id="dataId" style="display: none;">
           <input type="button" value="Add a Pattern" onclick="document.getElementById('dataId').click();" />
@@ -581,25 +583,29 @@ var drawGraph = function(dataObject){
   convDrawn = totalTpIpArray.length;
   console.log(comparisonTableData);
   progress("pies");
-  let chart1 = displayPieChar(numOfNodes.data, numOfNodes.options, "piechart-1", rainbows.nodesRainbow, undefined);
-  let chart2 = displayPieChar(numOfSharedNodes.data, numOfSharedNodes.options, "piechart-2", sharedNodesRainbow, undefined);
-  let chart3 = displayPieChar(convSharingNodes.data, convSharingNodes.options, "piechart-3", rainbows.pieChartRainbow, comparisonTableData.uniquenessNodes);
-  var eventHandlerPieCharts = function(chart, data){
-    let row = chart.getSelection();
-    if(row.length > 0){
-      row = row[0].row;
-      let value = data.getValue(row, 0);
-      value = value.split(" ");
-      console.log(value[2]);
-      console.log(document.body.classList)
-      if(value.length == 2) document.body.classList.toggle("enable-shared-"+1)
-      else document.body.classList.toggle("enable-shared-"+value[2]);
+  try {
+    let chart1 = displayPieChar(numOfNodes.data, numOfNodes.options, "piechart-1", rainbows.nodesRainbow, undefined);
+    let chart2 = displayPieChar(numOfSharedNodes.data, numOfSharedNodes.options, "piechart-2", sharedNodesRainbow, undefined);
+    let chart3 = displayPieChar(convSharingNodes.data, convSharingNodes.options, "piechart-3", rainbows.pieChartRainbow, comparisonTableData.uniquenessNodes);
+    var eventHandlerPieCharts = function(chart, data){
+      let row = chart.getSelection();
+      if(row.length > 0){
+        row = row[0].row;
+        let value = data.getValue(row, 0);
+        value = value.split(" ");
+        console.log(value[2]);
+        console.log(document.body.classList)
+        if(value.length == 2) document.body.classList.toggle("enable-shared-"+1)
+        else document.body.classList.toggle("enable-shared-"+value[2]);
+      }
+      chart.setSelection([]);
     }
-    chart.setSelection([]);
+    setStyleShared(sharedNodesRainbow);
+    // google.visualization.events.addListener(chart1, "select", function(){eventHandlerPieCharts(chart1 , google.visualization.arrayToDataTable(numOfNodes.data), rainbows.nodesRainbow)})
+      google.visualization.events.addListener(chart2, "select", function(){eventHandlerPieCharts(chart2, google.visualization.arrayToDataTable(numOfSharedNodes.data))})
+  } catch (e) {
+    console.log("Cannot load google charts!");
   }
-  setStyleShared(sharedNodesRainbow);
-  // google.visualization.events.addListener(chart1, "select", function(){eventHandlerPieCharts(chart1 , google.visualization.arrayToDataTable(numOfNodes.data), rainbows.nodesRainbow)})
-  google.visualization.events.addListener(chart2, "select", function(){eventHandlerPieCharts(chart2, google.visualization.arrayToDataTable(numOfSharedNodes.data))})
   // google.visualization.events.addListener(chart3, "select", function(){eventHandlerPieCharts(chart3, google.visualization.arrayToDataTable(convSharingNodes.data),rainbows.pieChartRainbow)})
   // console.log(c);
 
@@ -630,28 +636,7 @@ var renderSvg = function(g, clazz, rainbow, rules, convSize){
   // Create the renderer
   var render = new dagreD3.render();
 
-  render.shapes().gateway = function(parent, bbox, node) {
-  var w = bbox.width,
-      h = bbox.height,
-      points = [
-        { x:   w/2, y: 0 },
-        { x:   -w/10,   y: h/2 },
-        { x:   w/2, y: h },
-        { x:   w*1.1,   y: h/2 }
-      ];
-      shapeSvg = parent.insert("polygon", ":first-child")
-        .attr("points", points.map(function(d) { return d.x + "," + d.y; }).join(" "))
-        .attr("transform", "translate(" + (-w/2) + "," + (-(h/2)) + ")");
-      parent.insert("path", ":first-child")
-        .attr("d", "m 0,0 -15.3186,15.5721 -15.6816,-15.2071 -6.8582,7.1056 15.6149,15.1415 -15.2529,15.5052 7.062,6.9471 15.2966,-15.5498 15.6595,15.1852 6.8801,-7.1279 -15.5926,-15.1196 15.2529,-15.5052 -7.0621,-6.9471 z")
-        .attr("transform", "translate(6,-9) scale(0.4)");
-
-      node.intersect = function(point) {
-        return dagreD3.intersect.polygon(node, points, point);
-      };
-
-      return shapeSvg;
-  };
+  setupShapes(render);
 
   // Run the renderer. This is what draws the final graph.
   render(inner, g);
@@ -740,11 +725,6 @@ var renderSvg = function(g, clazz, rainbow, rules, convSize){
     return obj;
   }
   function displayPieChar(arr, options, id, rainbow, rules){
-    if (!google) {
-      document.getElementById(id).innerHTML = "<p class='error'>Cannot load google charts</p>";
-      return;
-    }
-
     data = google.visualization.arrayToDataTable(arr);
     if(id === "piechart-3" || id == "piechart-4"){
       options.colors = []

@@ -429,3 +429,10 @@ var setUpTotalClassForDifferentIpTp = function(nodes, key){
   }
   return word;
 }
+var showNodeFrequency = function(e) {
+  if (e.checked) {
+    document.body.classList.remove("hideNodeFrequency");
+  } else {
+    document.body.classList.add("hideNodeFrequency");   
+  }
+}

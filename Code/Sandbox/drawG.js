@@ -31,9 +31,10 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
       let clazz = getClassForNode(word, patternClazz, nodes, key, "", false);
       let label = nodes[key][st].statusArray[0].key + '\n' + "(" + totalRequests[key] + ")";
       g.setNode(key, {shape: "rect", label: label, class: clazz});
-      g.setNode("middleXOR-"+key,{label: "X", shape: "gateway", class: "type-XOR middleXOR"});
+      //this is the gateway between request and multiple responses
+      g.setNode("middleXOR-"+key,{label: "X", shape: "small_gateway", class: "type-XOR middleXOR"});
       var str = "inXOR-"+key
-      if(Object.keys(incomingXorNodes[key]).length > 1) g.setNode(str, {label: "XOR", shape: "diamond", class: "type-XOR incomingXOR"});
+      if(Object.keys(incomingXorNodes[key]).length > 1) g.setNode(str, {label: "X", shape: "incoming_gateway", class: "type-XOR incomingXOR"});
       for(var status in nodes[key]){
         let id = key+' '+status;
         word = setUpClassForDifferentIpTp(nodes, key, status);
@@ -44,7 +45,7 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
         hasStatus(statusObj, status);
         g.setNode(id, {shape: "rect", label : label, class: clazz});
         if(nodes[key][status].outgoingXOR){
-          g.setNode("XOR-"+key+' '+status, {label: "XOR", shape: "diamond", class: "type-XOR outgoingXOR"});
+          g.setNode("XOR-"+key+' '+status, {label: "X", shape: "outgoing_gateway", class: "type-XOR outgoingXOR"});
         }
       }
     }
@@ -141,3 +142,36 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
             node.rx = node.ry = 5;
           });
         }
+
+var setupShapes = function(render) {
+
+  function makeGateway(scale,woff,hoff=0,translate) {
+    return function(parent, bbox, node) {
+      var w = bbox.width,
+          h = bbox.height,
+          points = [
+            { x:   w/2, y: -hoff*h },
+            { x:   -woff*w,   y: h/2 },
+            { x:   w/2, y: h*(1+hoff) },
+            { x:   w*(1+woff),   y: h/2 }
+          ];
+          shapeSvg = parent.insert("polygon", ":first-child")
+            .attr("points", points.map(function(d) { return d.x + "," + d.y; }).join(" "))
+            .attr("transform", "translate(" + (-w/2) + "," + (-(h/2)) + ")");
+          parent.insert("path", ":first-child")
+            .attr("d", "m 0,0 -15.3186,15.5721 -15.6816,-15.2071 -6.8582,7.1056 15.6149,15.1415 -15.2529,15.5052 7.062,6.9471 15.2966,-15.5498 15.6595,15.1852 6.8801,-7.1279 -15.5926,-15.1196 15.2529,-15.5052 -7.0621,-6.9471 z")
+            .attr("transform", "translate("+translate+") scale("+scale+")");
+
+          node.intersect = function(point) {
+            return dagreD3.intersect.polygon(node, points, point);
+          };
+
+          return shapeSvg;
+      };
+  }
+
+  render.shapes().small_gateway = makeGateway(0.4,0.1,0,"6,-9");
+  render.shapes().incoming_gateway = makeGateway(0.5,0.3,0.1,"8,-11");
+  render.shapes().outgoing_gateway = makeGateway(0.5,0.3,0.1,"8,-11");
+              
+}
