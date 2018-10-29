@@ -10,9 +10,9 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
       let patternClazz = getPatternClassName(key, status);
       let clazz = getClassForNode(word, patternClazz, nodes, key, status, false);
       if(incomingXorNodes[key] !== undefined) checkIfIncomingXorExists(nodes, key, incomingXorNodes, Object.keys(incomingXorNodes[key]).length, "inXOR-"+key)
-      let label = nodes[key][status].statusArray[0].key + '\n' + status + '\n' + "(" + nodes[key][status].statusArray.length + ")";
+      let label = nodes[key][status].statusArray[0].key + '\n \n' + status + '\n' + "(" + nodes[key][status].statusArray.length + ")";
       let id = key+' '+status;
-      g.setNode(id, { shape: "rect",
+      g.setNode(id, { shape: "reqresp",
       label : label,
       class: clazz});
       if(nodes[key][status].outgoingXOR){
@@ -30,7 +30,7 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
       updateComparisonUniqueness(word, comparisonTableData, key, undefined);
       let clazz = getClassForNode(word, patternClazz, nodes, key, "", false);
       let label = nodes[key][st].statusArray[0].key + '\n' + "(" + totalRequests[key] + ")";
-      g.setNode(key, {shape: "rect", label: label, class: clazz});
+      g.setNode(key, {shape: "request", label: label, class: clazz});
       //this is the gateway between request and multiple responses
       g.setNode("middleXOR-"+key,{label: "X", shape: "small_gateway", class: "type-XOR middleXOR"});
       var str = "inXOR-"+key
@@ -43,7 +43,7 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
         let label = status + '\n' +"(" + nodes[key][status].statusArray.length + ")";
         updateComparisonUniqueness(word, comparisonTableData, key, status);
         hasStatus(statusObj, status);
-        g.setNode(id, {shape: "rect", label : label, class: clazz});
+        g.setNode(id, {shape: "response", label : label, class: clazz});
         if(nodes[key][status].outgoingXOR){
           g.setNode("XOR-"+key+' '+status, {label: "X", shape: "outgoing_gateway", class: "type-XOR outgoingXOR"});
         }
@@ -139,7 +139,7 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
             // console.log(node);
             // console.log(g.nodes())
             // Round the corners of the nodes
-            node.rx = node.ry = 5;
+            node.rx = node.ry = 10;
           });
         }
 
@@ -170,9 +170,106 @@ var setupShapes = function(render) {
       };
   }
 
+  function makeBox(d_points,corners,split) {
+    return function(parent, bbox, node) {
+      var w = bbox.width,
+          h = bbox.height,
+          points = [
+            { x: 0, y: 0 },
+            { x: w, y: 0 },
+            { x: w, y: h },
+            { x: 0, y: h }
+          ];
+          function cornerToArc(i) {
+            if (corners[i]) return " a 10 10 90 0 1 "+corners[i].dx+ " " + corners[i].dy;
+            else return "";
+          }
+
+
+          if (split) {
+
+            var shapeSvg = parent.insert("rect", ":first-child")
+                  .attr("rx", node.rx)
+                  .attr("ry", node.ry)
+                  .attr("x", -bbox.width / 2)
+                  .attr("y", -bbox.height / 2)
+                  .attr("width", bbox.width)
+                  .attr("height", bbox.height)
+                  .attr("class", "hide");
+
+            node.intersect = function(point) {
+              return dagreD3.intersect.rect(node, point);
+            };
+
+            split_line = " M 0,"+2*h/5+" ";
+            for (let i = 0; i < 2; i++) {
+              split_line += " L " + (points[i].x+d_points[i].x) + "," + (points[i].y+d_points[i].y) + cornerToArc(i);
+            }
+            split_line += " l 0,"+((2*h/5)-10)+" z";
+
+            parent.insert("path", ":first-child")
+              .attr("d", split_line)
+              .attr("class", "type-Request")
+              .attr("transform", "translate(" + (-w/2) + "," + (-(h/2)) + ")");
+
+            split_line = " M 0,"+2*h/5+" H "+w;
+            for (let i = 2; i < points.length; i++) {
+              split_line += " L " + (points[i].x+d_points[i].x) + "," + (points[i].y+d_points[i].y) + cornerToArc(i);
+            }
+            split_line += " z";
+
+            parent.insert("path", ":first-child")
+              .attr("d", split_line)
+              .attr("class", "type-Response")
+              .attr("transform", "translate(" + (-w/2) + "," + (-(h/2)) + ")");
+          } else {
+
+             shapeSvg = parent.insert("path", ":first-child")
+              .attr("d", "m 0,10 L " + points.map(function(d,i) { return (d.x+d_points[i].x) + "," + (d.y+d_points[i].y) + cornerToArc(i); }).join("L ") + " z")
+              .attr("transform", "translate(" + (-w/2) + "," + (-(h/2)) + ")");
+
+             node.intersect = function(point) {
+                return dagreD3.intersect.polygon(node, points, point);
+             };
+          }
+
+          return shapeSvg;
+      };
+  }
+
   render.shapes().small_gateway = makeGateway(0.4,0.1,0,"6,-9");
   render.shapes().incoming_gateway = makeGateway(0.5,0.3,0.1,"8,-11");
   render.shapes().outgoing_gateway = makeGateway(0.5,0.3,0.1,"8,-11");
   render.shapes().large_gateway = makeGateway(0.5,0.3,0.1,"8,-11");
-                 
+  render.shapes().request = makeBox([
+            { x: 0, y: 10 },
+            { x: -10, y: 0 },
+            { x: 0, y: 0 },
+            { x: 0, y: 0 }
+          ],[
+            { dx: 10, dy: -10 },
+            { dx: 10, dy: 10 }
+          ]);
+  render.shapes().response = makeBox([
+            { x: 0, y: 0 },
+            { x: 0, y: 0 },
+            { x: 0, y: -10 },
+            { x: 10, y: 0 }
+          ],[ 
+            { dx: 0, dy: 0 },
+            { dx: 0, dy: 0 },
+            { dx: -10, dy: 10 },
+            { dx: -10, dy: -10 }
+          ]);   
+  render.shapes().reqresp = makeBox([
+            { x: 0, y: 10 },
+            { x: -10, y: 0 },
+            { x: 0, y: -10 },
+            { x: 10, y: 0 }
+          ],[ 
+            { dx: 10, dy: -10 },
+            { dx: 10, dy: 10 },
+            { dx: -10, dy: 10 },
+            { dx: -10, dy: -10 }
+          ],true);                   
 }
