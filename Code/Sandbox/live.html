@@ -35,7 +35,7 @@
     <div style="display: flex; flex-direction: column; height: 100vh; width: 100vw">
       <div id="inputlog">
         <h4>Conversation Log</h4>
-        <textarea onchange="live(this.value)" onkeyup="live(this.value)">3/10/2013 19:37:52 45.177.25.9 PUT / 409
+        <textarea onkeyup="live(this.value,getElementById('autolive').checked)">3/10/2013 19:37:52 45.177.25.9 PUT / 409
 13/3/2014 7:41:15 56.162.113.79 POST /resource 201
 2/2/2016 1:16:7 204.20.48.194 DELETE /last 500
 21/5/2015 12:55:15 144.55.236.141 POST /job/3 403
@@ -58,7 +58,8 @@
           </select><label for="multiSelect">Time Intervals</label>
          </div>
         <div id="Btns" style="display: flex; flex-direction: column; justify-content: center;">
-          <button id="multiSelectForm" type="submit"/> Draw Graph </button>
+          <button id="multiSelectForm" type="submit"/> Draw RESTalk </button>
+          <label for="autolive">Auto-redraw<input id="autolive" type="checkbox"></label>
           <progress id="progress" style="display: none";></progress>
           <p id="status" style="display: none";></p>
         </div>

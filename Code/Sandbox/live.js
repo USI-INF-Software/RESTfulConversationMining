@@ -167,12 +167,15 @@ function makeDelay(ms) {
 
 var delay = makeDelay(500);
 
-function live(text) {
+function live(text,auto) {
   delay(()=>{
     var data = localParser(text);
     console.log(data);
     clients = data.TemplateURIs; //TODO switch
     displayClients();
+
+    if (!auto) return;
+
     var ret2 = [];
     Object.keys(clients).forEach((e)=>{ret2.push(clients[e])}); //select all clients
     drawGraph(ret2);  
