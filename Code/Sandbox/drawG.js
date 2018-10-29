@@ -16,11 +16,11 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
       label : label,
       class: clazz});
       if(nodes[key][status].outgoingXOR){
-        g.setNode("XOR-"+id, {label: "XOR", shape: "diamond", class: "type-XOR outgoingXOR"});
+        g.setNode("XOR-"+id, {label: "X", shape: "large_gateway", class: "type-XOR outgoingXOR"});
       }
       if((nodes[key][status].statusArray.length) > 1 && Object.keys(incomingXorNodes[key]).length > 1){
         var str = "inXOR-"+key
-        g.setNode(str, {label: "XOR", shape: "diamond", class: "type-XOR incomingXOR"});
+        g.setNode(str, {label: "X", shape: "large_gateway", class: "type-XOR incomingXOR"});
       }
     }
     else{
@@ -173,5 +173,6 @@ var setupShapes = function(render) {
   render.shapes().small_gateway = makeGateway(0.4,0.1,0,"6,-9");
   render.shapes().incoming_gateway = makeGateway(0.5,0.3,0.1,"8,-11");
   render.shapes().outgoing_gateway = makeGateway(0.5,0.3,0.1,"8,-11");
-              
+  render.shapes().large_gateway = makeGateway(0.5,0.3,0.1,"8,-11");
+                 
 }
