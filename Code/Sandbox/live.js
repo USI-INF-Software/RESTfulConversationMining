@@ -157,12 +157,24 @@ return data;
 
 }
 
+function makeDelay(ms) {
+    var timer;
+    return function(callback){
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(callback, ms);
+    };
+};
+
+var delay = makeDelay(500);
+
 function live(text) {
-  var data = localParser(text);
-  console.log(data);
-  clients = data.TemplateURIs; //TODO switch
-  displayClients();
-  var ret2 = [];
-  Object.keys(clients).forEach((e)=>{ret2.push(clients[e])}); //select all clients
-  drawGraph(ret2);  
+  delay(()=>{
+    var data = localParser(text);
+    console.log(data);
+    clients = data.TemplateURIs; //TODO switch
+    displayClients();
+    var ret2 = [];
+    Object.keys(clients).forEach((e)=>{ret2.push(clients[e])}); //select all clients
+    drawGraph(ret2);  
+  });
 }
