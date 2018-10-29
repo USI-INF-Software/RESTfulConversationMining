@@ -167,9 +167,43 @@ function makeDelay(ms) {
 
 var delay = makeDelay(500);
 
+function addClientID(id, rows) {
+  return rows.map((l,i) => { return "C" + id + " " + l });
+}
+
+function addTimestamps(rows) {
+  return 
+}
+
 function live(text,auto) {
   delay(()=>{
-    var data = localParser(text);
+    console.log(text);
+    var data;
+    var rows = text.split("\n");
+    var columns = rows[0].split(" ");
+    if (columns.length == 3) {
+      //assume client is missing
+      var client_id = 0;
+      var client_rows = [];
+      rows.forEach(r => {
+        if (r.trim().length == 0) {
+          client_id++;
+        } else {
+          client_rows.push("C" + client_id + " " + r);
+        }
+      })
+      rows = client_rows;
+    }
+    if(columns.length <= 4) {
+       //assume time is missing
+       timed_rows = rows.map((l,i) => { return i + " " + i + " " + l });
+       data = localParser(timed_rows.join("\n"));
+    }
+    else
+    if(columns.length == 6) {
+       //assume normal log
+       data = localParser(text);
+    } 
     console.log(data);
     clients = data.TemplateURIs; //TODO switch
     displayClients();
