@@ -207,7 +207,7 @@ var setupShapes = function(render) {
             }
             split_line += " l 0,"+((2*h/5)-10)+" z";
 
-            parent.insert("path", ":first-child")
+            parent.insert("path", ":last-child")
               .attr("d", split_line)
               .attr("class", "type-Request")
               .attr("transform", "translate(" + (-w/2) + "," + (-(h/2)) + ")");
@@ -218,7 +218,7 @@ var setupShapes = function(render) {
             }
             split_line += " z";
 
-            parent.insert("path", ":first-child")
+            parent.insert("path", ":last-child")
               .attr("d", split_line)
               .attr("class", "type-Response")
               .attr("transform", "translate(" + (-w/2) + "," + (-(h/2)) + ")");
