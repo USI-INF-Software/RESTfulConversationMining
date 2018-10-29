@@ -32,7 +32,8 @@
   <link rel="stylesheet" href="styles.css">
 
   <body>
-    <div style="display: flex; flex-direction: column; height: 100vh; width: 100vw">
+    <div style="width: 100vw">      
+      <div id="Container" style="display: flex; justify-content: space-around">
       <div id="inputlog">
         <h4>Conversation Log</h4>
         <textarea onkeyup="live(this.value,getElementById('autolive').checked)">3/10/2013 19:37:52 45.177.25.9 PUT / 409
@@ -43,7 +44,7 @@
 20/7/2017 11:0:27 3.171.112.202 POST /last 401
 </textarea>
       </div>
-      <div id="Container" style="display: flex; justify-content: space-around">
+
        <div style="flex: 1">
         <h4>Conversation Mining</h4>
         <div style="display: flex; justify-content: space-around; width: 50vw;">
@@ -80,6 +81,30 @@
         </div>
        </div>
      </div> 
+      
+      <!-- <svg width="200px" height="200px"></svg> -->
+    </div>
+    <div style="display: flex; flex: 1; align-items: stretch;" id="bigcontainer">
+      <div style="flex: 3;">
+        <h4>Reconstructed Conversation Model</h4>
+        <svg id="restalk" style="resize: vertical; width: 100%; height: 90%"> </svg>
+      </div>
+      <div id="smallContainer" style="display: flex; flex: 1; flex-direction: column">
+        <h4>Statistics</h4>
+        <div id="pieCharts" style="display: block;">
+          <div id="piechart-1">
+          </div>
+          <div id="piechart-2">
+          </div>
+          <div id="piechart-3">
+          </div>
+          <div id="piechart-4">
+          </div>
+          <!-- <svg id="vizPattern"> </svg> -->
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; height: 100vh">
       <div id="PatternContainer"style="display: flex">
         <div id="CandidatePatternMenu" style="flex: 1">
           <h4>Pattern Discovery</h4>
@@ -107,27 +132,8 @@
           </div>
         </div>
       </div>
-      <!-- <svg width="200px" height="200px"></svg> -->
-    </div>
-    <div style="display: flex; flex: 1;" id="bigcontainer">
-      <div style="flex: 3;">
-        <h4>Reconstructed Conversation Model</h4>
-        <svg id="restalk" style="resize: horizontal; height: 100%; width: 100%"> </svg>
-      </div>
-      <div id="smallContainer" style="display: flex; flex: 1; flex-direction: column">
-        <h4>Statistics</h4>
-        <div id="pieCharts" style="display: block;">
-          <div id="piechart-1">
-          </div>
-          <div id="piechart-2">
-          </div>
-          <div id="piechart-3">
-          </div>
-          <div id="piechart-4">
-          </div>
-          <!-- <svg id="vizPattern"> </svg> -->
-        </div>
-      </div>
+
+
       <div style="display: flex; flex: 1; flex-direction: column">
         <h4>Pattern Visualization</h4>
         <svg id="vizPattern" style="resize: horizontal;"> </svg>
