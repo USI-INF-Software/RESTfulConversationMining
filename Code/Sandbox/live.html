@@ -104,7 +104,7 @@
         </div>
       </div>
     </div>
-    <div style="display: flex; height: 100vh">
+    <div id="Patterns" style="display: flex; height: 100vh">
       <div id="PatternContainer"style="display: flex">
         <div id="CandidatePatternMenu" style="flex: 1">
           <h4>Pattern Discovery</h4>
@@ -555,8 +555,8 @@ var drawGraph = function(dataObject){
 
   for(let client in dataObject){
     let start = "start-"+client;
-    g.setNode(start, {shape: "circle", class : "start" + " tpIpColoring-"+client});
-    g.setNode("end-"+client, {shape: "circle", style: "stroke-width: 4; stroke: black", class : "start" + " tpIpColoring-"+client})
+    g.setNode(start, {shape: "circle", class : "start" + " tpIpColoring-"+client, label: client});
+    g.setNode("end-"+client, {shape: "circle", style: "stroke-width: 4; stroke: black", class : "start" + " tpIpColoring-"+client, label: client})
     let length = dataObject[client].length;
     let cl = dataObject[client];
     obj = seqPreservingComparison(cl, length, nodes, start, incomingXorNodes, "end-"+client, client);
@@ -585,7 +585,7 @@ var drawGraph = function(dataObject){
   setNodeClasses(g, nodes, totalRequestsData);
 
   progress("visualization config");
-  setVisualizationConfig(nfc, eft, edc, sep, statusColoring, maxRequests, statusObj, {element: methodColoring, Obj: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]});
+  setVisualizationConfig(nfc, eft, edc, sep, statusColoring, maxRequests, statusObj, {element: methodColoring, Obj: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"]});
   // triggerEdgeProbability(sep);
 
   //this seems to be the bottleneck!
