@@ -8,7 +8,7 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
       updateComparisonUniqueness(word, comparisonTableData, key, status);
       hasStatus(statusObj, status);
       let patternClazz = getPatternClassName(key, status);
-      let clazz = getClassForNode(word, patternClazz, nodes, key, status, false);
+      let clazz = getClassForNode(word, patternClazz, nodes, key, status, false) +" totalRequest-"+totalRequests[key];
       if(incomingXorNodes[key] !== undefined) checkIfIncomingXorExists(nodes, key, incomingXorNodes, Object.keys(incomingXorNodes[key]).length, "inXOR-"+key)
       let label = nodes[key][status].statusArray[0].key + '\n \n' + status + '\n' + "(" + nodes[key][status].statusArray.length + ")";
       let id = key+' '+status;
@@ -28,7 +28,7 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
       var word = setUpTotalClassForDifferentIpTp(nodes, key);
       let patternClazz = getPatternClassName(key, undefined);
       updateComparisonUniqueness(word, comparisonTableData, key, undefined);
-      let clazz = getClassForNode(word, patternClazz, nodes, key, "", false);
+      let clazz = getClassForNode(word, patternClazz, nodes, key, "", false) +" totalRequest-"+totalRequests[key];
       let label = nodes[key][st].statusArray[0].key + '\n' + "(" + totalRequests[key] + ")";
       g.setNode(key, {shape: "request", label: label, class: clazz});
       //this is the gateway between request and multiple responses
@@ -39,7 +39,7 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
         let id = key+' '+status;
         word = setUpClassForDifferentIpTp(nodes, key, status);
         patternClazz = getPatternClassName(key, status);
-        clazz = getClassForNode(word, patternClazz, nodes, key, status, true);
+        clazz = getClassForNode(word, patternClazz, nodes, key, status, true) +" totalRequest-"+nodes[key][status].statusArray.length;
         let label = status + '\n' +"(" + nodes[key][status].statusArray.length + ")";
         updateComparisonUniqueness(word, comparisonTableData, key, status);
         hasStatus(statusObj, status);
