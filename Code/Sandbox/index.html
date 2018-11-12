@@ -399,8 +399,8 @@ var visualizePattern = function(obj, value){
   .setDefaultEdgeLabel(function() { return {}; });
   let start = "start-"+value;
   let end = "end-"+value;
-  vizg.setNode(start, {shape: "circle", class : start});
-  vizg.setNode(end, {shape: "circle", style: "stroke-width: 4; stroke: black", class : end})
+  vizg.setNode(start, {shape: "circle", class : start, label: value});
+  vizg.setNode(end, {shape: "circle", style: "stroke-width: 4; stroke: black", class : end, label: value})
   let length = Object.keys(obj).length;
   let cl = obj;
   let nodes = [];
