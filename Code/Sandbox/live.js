@@ -150,8 +150,8 @@ flatParser = createData(links, undefined, flatProcessingOfFile);
 // console.log(parseRouteData);
 var data = {};
 data.IgnoreURIs = flatParser;
-data.FullURIs = parseRouteData;
-data.TemplateURIs = sequentialParser;
+data.FullURIs = sequentialParser;
+data.TemplateURIs = parseRouteData;
 
 return data;
 
@@ -175,9 +175,8 @@ function addTimestamps(rows) {
   return 
 }
 
-function live(text,auto) {
+function live(text,auto,kind) {
   delay(()=>{
-    console.log(text);
     var data;
     var rows = text.split("\n");
     var columns = rows[0].split(" ");
@@ -205,7 +204,17 @@ function live(text,auto) {
        data = localParser(text);
     } 
     console.log(data);
-    clients = data.TemplateURIs; //TODO switch
+
+    var select = document.getElementById('miningType');
+    var kind = select.options[select.options.selectedIndex].id;
+    console.log(kind);
+    if (kind == "full-url") {
+      clients = data.FullURIs; //TODO switch
+    } else if (kind == "no-url") {
+      clients = data.IgnoreURIs;
+    } else {
+      console.log("Unknown mining kind: "+kind);
+    }
     displayClients();
 
     if (!auto) return;
@@ -214,4 +223,8 @@ function live(text,auto) {
     Object.keys(clients).forEach((e)=>{ret2.push(clients[e])}); //select all clients
     drawGraph(ret2);  
   });
+}
+
+function miningTypeChanged(select) {
+  live(document.getElementById('logtext').value, document.getElementById('autolive').checked)
 }
