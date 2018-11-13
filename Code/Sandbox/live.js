@@ -195,7 +195,7 @@ function live(text,auto,kind) {
     }
     if(columns.length <= 4) {
        //assume time is missing
-       timed_rows = rows.map((l,i) => { return i + " " + i + " " + l });
+       timed_rows = rows.map((l,i) => { return i + " " + i + " " + l }).reverse();
        data = localParser(timed_rows.join("\n"));
     }
     else
