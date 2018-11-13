@@ -161,8 +161,8 @@ flatParser = createData(links, undefined, flatProcessingOfFile);
 // console.log(parseRouteData);
 var data = {};
 data.IgnoreURIs = flatParser;
-data.FullURIs = parseRouteData;
-data.TemplateURIs = sequentialParser;
+data.TemplateURIs = parseRouteData;
+data.FullURIs = sequentialParser;
 // Save Data into the data.js file.
 // console.log(data);
 var filepath = "data.js"
