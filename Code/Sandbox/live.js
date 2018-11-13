@@ -1,4 +1,4 @@
-function localParser(text) {
+function localParser(text,routes) {
 
 //Read the file and parse it to objects
 var readParseFile = function(links){
@@ -25,8 +25,10 @@ var readParseURLRouteFile = function(links, routes){
       let spaces = str.trim().split(/\s+/);
       var url = spaces[4];
 
+      console.log(routes,url);
       routes.forEach(function(r) {
         if (r.match(url)) {
+          console.log(r.spec);
           url = r.spec;
           //remove : character which will interfere later with the way urls are indexed
           url=url.replace(/\:/g,'');
@@ -144,10 +146,10 @@ var createData = function(links, routes, fx){
 var links = text.split("\n");
 
 var parseRouteData, sequentialParser, flatParser;
-//if(routes !== undefined) parseRouteData = createData(links, routes, readParseURLRouteFile);
+if(routes !== undefined) parseRouteData = createData(links, routes, readParseURLRouteFile);
 sequentialParser = createData(links, undefined, readParseFile);
 flatParser = createData(links, undefined, flatProcessingOfFile);
-// console.log(parseRouteData);
+console.log(parseRouteData);
 var data = {};
 data.IgnoreURIs = flatParser;
 data.FullURIs = sequentialParser;
@@ -175,7 +177,7 @@ function addTimestamps(rows) {
   return 
 }
 
-function live(text,auto,kind) {
+function live(text,auto) {
   delay(()=>{
     var data;
     var rows = text.split("\n");
@@ -195,13 +197,18 @@ function live(text,auto,kind) {
     }
     if(columns.length <= 4) {
        //assume time is missing
-       timed_rows = rows.map((l,i) => { return i + " " + i + " " + l }).reverse();
-       data = localParser(timed_rows.join("\n"));
+       timed_rows = rows.map((l,i) => { return i + " " + i + " " + l }); //.reverse();
+       var routes = document.getElementById("routestext").value.trim().split("\n");
+       routes = createRoutes(routes);
+       console.log(routes);
+       data = localParser(timed_rows.join("\n"),routes);
     }
     else
     if(columns.length == 6) {
        //assume normal log
-       data = localParser(text);
+       var routes = document.getElementById("routestext").value.trim().split("\n");
+       routes = createRoutes(routes);
+       data = localParser(text,routes);
     } 
     console.log(data);
 
@@ -212,6 +219,8 @@ function live(text,auto,kind) {
       clients = data.FullURIs; //TODO switch
     } else if (kind == "no-url") {
       clients = data.IgnoreURIs;
+    } else if (kind == "template-url") {
+      clients = data.TemplateURIs;
     } else {
       console.log("Unknown mining kind: "+kind);
     }
@@ -227,4 +236,11 @@ function live(text,auto,kind) {
 
 function miningTypeChanged(select) {
   live(document.getElementById('logtext').value, document.getElementById('autolive').checked)
+
+  var kind = select.options[select.options.selectedIndex].id;
+  if (kind == "template-url") {
+    document.getElementById("div-url-templates").style.display = "block"; 
+  } else {
+    document.getElementById("div-url-templates").style.display = "none"; 
+  }
 }

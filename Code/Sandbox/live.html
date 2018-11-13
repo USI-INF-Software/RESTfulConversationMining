@@ -15,6 +15,7 @@
   <link rel="stylesheet/less" type="text/css" href="bower_components/tyles.less" />
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script src="lib/route-browser.js"></script>
   <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
    -->
 <!--   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -36,13 +37,18 @@
       <div id="Container" style="display: flex; justify-content: space-around">
       <div id="inputlog">
         <h4>Conversation Log</h4>
-        <textarea onkeyup="live(this.value,getElementById('autolive').checked)">3/10/2013 19:37:52 45.177.25.9 PUT / 409
+        <textarea id="logtext" onkeyup="live(this.value,getElementById('autolive').checked)">3/10/2013 19:37:52 45.177.25.9 PUT / 409
 13/3/2014 7:41:15 56.162.113.79 POST /resource 201
 2/2/2016 1:16:7 204.20.48.194 DELETE /last 500
 21/5/2015 12:55:15 144.55.236.141 POST /job/3 403
 27/5/2017 2:16:42 144.55.236.141 OPTIONS /other 404
 20/7/2017 11:0:27 3.171.112.202 POST /last 401
-</textarea>
+</textarea><div id="div-url-templates" style="display: none">
+        <h4>Service API Routes URL Templates</h4>
+        <textarea id="routestext" onkeyup="live(getElementById('logtext').value,getElementById('autolive').checked)">/poll/:id/vote
+/poll/:id/vote/:id
+/poll/:id
+</textarea></div>
       </div>
 
        <div style="flex: 1">
@@ -59,6 +65,8 @@
           </select><label for="multiSelect">Time Intervals</label>
          </div>
         <div id="Btns" style="display: flex; flex-direction: column; justify-content: center;">
+          <select id="miningType" onchange="miningTypeChanged(this);">
+            <option id="full-url">Full URL</option><option id="no-url">Ignore URL</option><option id="template-url">Abstract URL Templates</option></select>
           <button id="multiSelectForm" type="submit"/> Draw RESTalk </button>
           <label for="autolive">Auto-redraw<input id="autolive" type="checkbox"></label>
           <progress id="progress" style="display: none";></progress>
