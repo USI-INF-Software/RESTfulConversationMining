@@ -212,6 +212,7 @@ function expand_after(rows,i,join_point, expanded_rows)
 function expand_before(rows,i,join_point, expanded_rows)
 {
   let log_start = 0;
+  let skip = 1;
   for(let j = 0; j < i; j++) {
     if(rows[j].trim().length == 0) {
       log_start = j;
@@ -221,8 +222,16 @@ function expand_before(rows,i,join_point, expanded_rows)
         //add before
         expanded_rows.push(rows[k].trim());
       }
+      let k = i+1;
+      while (k<rows.length && rows[k].trim().length > 0)
+      {
+        expanded_rows.push(rows[k].trim());
+        k++;
+      }
+      skip = k-i;
     }
   }
+  return skip;
 }
 
 function expand_middle(rows,i,end_join_point, start_join_point, expanded_rows)
@@ -255,7 +264,7 @@ function live(text,auto) {
           expand_middle(rows,i,rows[i+1].trim(),rows[i-1].trim(),expanded_rows);
         } else
         if (i+1<rows.length && rows[i+1].length > 0) { //something afterwards
-          expand_before(rows,i,rows[i+1].trim(),expanded_rows);
+          i += expand_before(rows,i,rows[i+1].trim(),expanded_rows);
         } else {
           expand_after(rows,i-2,rows[i-1].trim(),expanded_rows);
         }
@@ -263,6 +272,10 @@ function live(text,auto) {
         expanded_rows.push(rows[i].trim());
       }
     };
+
+    console.log("Expanded ... log:");
+    console.log(expanded_rows);
+    console.log(expanded_rows.join("\n"));
 
     var client_id = 0;
       var client_rows = [];
