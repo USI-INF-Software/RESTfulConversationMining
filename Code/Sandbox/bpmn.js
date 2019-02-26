@@ -225,6 +225,22 @@ function expand_before(rows,i,join_point, expanded_rows)
   }
 }
 
+function expand_middle(rows,i,end_join_point, start_join_point, expanded_rows)
+{
+  let log_start = 0;
+  for(let j = 0; j < i; j++) {
+    if(rows[j].trim() == start_join_point) {
+      log_start = j+1;
+    }
+    if(rows[j].trim() == end_join_point) {
+      for(let k = log_start; k<j; k++) {
+        //add before
+        expanded_rows.push(rows[k].trim());
+      }
+    }
+  }
+}
+
 
 function live(text,auto) {
   delay(()=>{
@@ -234,7 +250,11 @@ function live(text,auto) {
     var expanded_rows = [];
     for(let i = 0; i< rows.length; i++) {
       if (rows[i].trim() == "...") {
-        if (i+1<rows.length && rows[i+1].length > 0) {
+        
+        if (i+1<rows.length && rows[i+1].length > 0 && i-1>0 && rows[i-1].length > 0) { //something afterwards and before
+          expand_middle(rows,i,rows[i+1].trim(),rows[i-1].trim(),expanded_rows);
+        } else
+        if (i+1<rows.length && rows[i+1].length > 0) { //something afterwards
           expand_before(rows,i,rows[i+1].trim(),expanded_rows);
         } else {
           expand_after(rows,i-2,rows[i-1].trim(),expanded_rows);
