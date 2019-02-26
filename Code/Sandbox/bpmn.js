@@ -195,14 +195,58 @@ function addTimestamps(rows) {
   return 
 }
 
+function expand_after(rows,i,join_point, expanded_rows)
+{
+  console.log("expand_after "+join_point);
+  for(let j = 0; j < i; j++) {
+    if(rows[j].trim() == join_point) {
+      let k = j+1;
+      while (k<rows.length && rows[k].trim().length > 0) {
+        expanded_rows.push(rows[k].trim());
+        k++;
+      }
+    }
+  }
+}
+
+function expand_before(rows,i,join_point, expanded_rows)
+{
+  let log_start = 0;
+  for(let j = 0; j < i; j++) {
+    if(rows[j].trim().length == 0) {
+      log_start = j;
+    }
+    if(rows[j].trim() == join_point) {
+      for(let k = log_start; k<j; k++) {
+        //add before
+        expanded_rows.push(rows[k].trim());
+      }
+    }
+  }
+}
+
+
 function live(text,auto) {
   delay(()=>{
     var data;
     var rows = text.split("\n");
 
+    var expanded_rows = [];
+    for(let i = 0; i< rows.length; i++) {
+      if (rows[i].trim() == "...") {
+        if (i+1<rows.length && rows[i+1].length > 0) {
+          expand_before(rows,i,rows[i+1].trim(),expanded_rows);
+        } else {
+          expand_after(rows,i-2,rows[i-1].trim(),expanded_rows);
+        }
+      } else {
+        expanded_rows.push(rows[i].trim());
+      }
+    };
+
     var client_id = 0;
       var client_rows = [];
-      rows.forEach(r => {
+      expanded_rows.forEach(r => {
         if (r.trim().length == 0) {
           client_id++;
         } else {
@@ -210,7 +254,7 @@ function live(text,auto) {
         }
       })
 
-    timed_rows = client_rows.map((l,i) => { return i + " " + i + " " + l });
+    timed_rows = client_rows.map((l,i) => { return i + " " + i + " " + l }); //.reverse();
     data = localParser(timed_rows.join("\n"));
 
     console.log(data);
