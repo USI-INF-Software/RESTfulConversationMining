@@ -27,7 +27,10 @@ var seqPreservingComparison = function(client, length, nodes, start, incomingXor
       "finalStart" : prev,
       "conv" : tpIndex,
     }
-    let delay = computeDelay(nodes, node.start, node.dataNode);
+    let delay = 0;
+    try {
+      delay = computeDelay(nodes, node.start, node.dataNode);
+    } catch (e) {  }
     if(k == null || s == null){
       k = str;
       s = status;

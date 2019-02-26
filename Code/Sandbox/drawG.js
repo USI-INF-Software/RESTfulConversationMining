@@ -12,9 +12,16 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
       if(incomingXorNodes[key] !== undefined) checkIfIncomingXorExists(nodes, key, incomingXorNodes, Object.keys(incomingXorNodes[key]).length, "inXOR-"+key)
       let label = nodes[key][status].statusArray[0].key + '\n \n' + status + '\n' + "(" + nodes[key][status].statusArray.length + ")";
       let id = key+' '+status;
-      g.setNode(id, { shape: "reqresp",
-      label : label,
-      class: clazz});
+      if (status == 0) {
+        label = nodes[key][status].statusArray[0].key.replace("TASK ","").replace(/_/g," ") + '\n' + "(" + nodes[key][status].statusArray.length + ")";
+        g.setNode(id, { shape: "bpmn_task",
+        label : label,
+        class: clazz});
+      } else {
+        g.setNode(id, { shape: "reqresp",
+        label : label,
+        class: clazz});
+      }
       if(nodes[key][status].outgoingXOR){
         g.setNode("XOR-"+id, {label: "X", shape: "large_gateway", class: "type-XOR outgoingXOR"});
       }
@@ -260,7 +267,18 @@ var setupShapes = function(render) {
             { dx: 0, dy: 0 },
             { dx: -10, dy: 10 },
             { dx: -10, dy: -10 }
-          ]);   
+          ]);
+  render.shapes().bpmn_task = makeBox([
+            { x: 0, y: 10 },
+            { x: -10, y: 0 },
+            { x: 0, y: -10 },
+            { x: 10, y: 0 }
+          ],[ 
+            { dx: 10, dy: -10 },
+            { dx: 10, dy: 10 },
+            { dx: -10, dy: 10 },
+            { dx: -10, dy: -10 }
+          ]);                   
   render.shapes().reqresp = makeBox([
             { x: 0, y: 10 },
             { x: -10, y: 0 },
