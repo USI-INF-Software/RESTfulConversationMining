@@ -16,3 +16,17 @@ ReceiveTheSet
 CheckDescription 
 CheckCosts 
 RejectRequest 
+
+
+Expected Expanded Log
+
+FillInReimbursementRequest 
+MarkTheBills 
+ScanAndAttach 
+PrintReimburement 
+PrepareTheSet 
+SendTheSet 
+ReceiveTheSet 
+CheckDescription 
+CheckCosts 
+RejectRequest 

@@ -10,9 +10,6 @@ SendTheSet
 MakeTheChanges 
 SendTheSet 
 ... 
-PrepareAdditionalInfo
-ProvideAdditionalInfo 
-...
 
 participant Head
 
@@ -42,15 +39,6 @@ ReceiveSet
 CheckCompleteness 
 CheckRimbursability 
 SendPayment 
-
-...
-CheckRimbursability 
-AskAdditionalInfo
-PrepareAdditionalInfo
-...
-ProvideAdditionalInfo 
-CheckCompleteness 
-...
 
 
 Expected Expanded Logs
@@ -92,21 +80,6 @@ SendTheSet
 ReceiveTheSet 
 CheckDescription 
 CheckCosts
-SendToFinance
-ReceiveSet 
-CheckCompleteness 
-CheckRimbursability 
-SendPayment 
-
-FillInReimbursementRequest 
-MarkTheBills 
-ScanAndAttach 
-PrintReimburement 
-PrepareTheSet 
-SendTheSet 
-ReceiveTheSet 
-CheckDescription 
-CheckCosts
 AskModifications
 MakeTheChanges
 SendTheSet 
@@ -115,52 +88,6 @@ CheckDescription
 CheckCosts 
 SendToFinance
 ReceiveSet 
-CheckCompleteness 
-CheckRimbursability 
-SendPayment 
-
-FillInReimbursementRequest 
-MarkTheBills 
-ScanAndAttach 
-PrintReimburement 
-PrepareTheSet 
-SendTheSet 
-ReceiveTheSet 
-CheckDescription 
-CheckCosts
-AskModifications
-MakeTheChanges
-SendTheSet 
-ReceiveTheSet 
-CheckDescription 
-CheckCosts 
-SendToFinance
-ReceiveSet 
-CheckCompleteness 
-CheckRimbursability 
-AskAdditionalInfo
-PrepareAdditionalInfo
-ProvideAdditionalInfo 
-CheckCompleteness 
-CheckRimbursability 
-SendPayment 
-
-FillInReimbursementRequest 
-MarkTheBills 
-ScanAndAttach 
-PrintReimburement 
-PrepareTheSet 
-SendTheSet 
-ReceiveTheSet 
-CheckDescription 
-CheckCosts
-SendToFinance
-ReceiveSet 
-CheckCompleteness 
-CheckRimbursability 
-AskAdditionalInfo
-PrepareAdditionalInfo
-ProvideAdditionalInfo 
 CheckCompleteness 
 CheckRimbursability 
 SendPayment 
