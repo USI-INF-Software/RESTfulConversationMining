@@ -1,8 +1,18 @@
-var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKey, maxDelay, minDelay, totalRequests, endConnections, statusObj){
+var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKey, maxDelay, minDelay, totalRequests, endConnections, statusObj, bpmnActivities){
+
+  function setParticipant(key, status, id) {
+    let P = Array.from(bpmnActivities.activities[nodes[key][status].statusArray[0].key.replace("TASK ","")])[0];
+    console.log(P);
+    if (P !== undefined) {
+      g.setParent(id, 'Participant_'+ P);
+    }
+  }
+
   for(var key in nodes){
     var size = Object.keys(nodes[key]).length;
     if(size == 1){
-      var status = Object.keys(nodes[key])[0]
+      var status = Object.keys(nodes[key])[0];
+      console.log(nodes);
       var str = "inXOR-"+key
       let word = setUpClassForDifferentIpTp(nodes, key, status);
       updateComparisonUniqueness(word, comparisonTableData, key, status);
@@ -17,6 +27,7 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
         g.setNode(id, { shape: "bpmn_task",
         label : label,
         class: clazz});
+        setParticipant(key,status,id);
       } else {
         g.setNode(id, { shape: "reqresp",
         label : label,
@@ -24,13 +35,15 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
       }
       if(nodes[key][status].outgoingXOR){
         g.setNode("XOR-"+id, {label: "X", shape: "large_gateway", class: "type-XOR outgoingXOR"});
+        setParticipant(key,status,"XOR-"+id);
       }
       if((nodes[key][status].statusArray.length) > 1 && Object.keys(incomingXorNodes[key]).length > 1){
         var str = "inXOR-"+key
         g.setNode(str, {label: "X", shape: "large_gateway", class: "type-XOR incomingXOR"});
+        setParticipant(key,status,"inXOR-"+key);
       }
     }
-    else{
+    else{ //this does not happen in BPMN
       var st = Object.keys(nodes[key])[0]
       var word = setUpTotalClassForDifferentIpTp(nodes, key);
       let patternClazz = getPatternClassName(key, undefined);
@@ -56,6 +69,11 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
         }
       }
     }
+  }
+  //Set Up Participants
+  for(p in bpmnActivities.participants) {
+    g.setNode("Participant_"+bpmnActivities.participants[p], {label: bpmnActivities.participants[p], clusterLabelPos: 'top', style: 'stroke: black; fill: white; stroke-dasharray: 1 0 1;'});
+    console.log("Participant_"+bpmnActivities.participants[p]);
   }
   //Set Up Edges
   for(var key in nodes){
@@ -132,22 +150,25 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
           var spaces =  endConnection.split(' ');
           var k = spaces[0]
           var s = spaces[1]
+          setParticipant(k,s,"end-"+end);
+          setParticipant(k,s,"start-"+end);
           if(nodes[k][s].outgoingXOR){
-            g.setEdge("XOR-"+k+' '+s, "end-"+end, {
-              label : roundUp(1/totalRequests[k]*100,1)+"%",
-              class: "edge-thickness-1 delay-coloring-0"})
+              g.setEdge("XOR-"+k+' '+s, "end-"+end, {
+                label : roundUp(1/totalRequests[k]*100,1)+"%",
+                class: "edge-thickness-1 delay-coloring-0"})
             }
             else{
               g.setEdge(k+' '+s, "end-"+end, {class: "edge-thickness-1 delay-coloring-0"});
+
             }
           }
-          g.nodes().forEach(function(v) {
-            var node = g.node(v);
-            // console.log(node);
-            // console.log(g.nodes())
-            // Round the corners of the nodes
-            node.rx = node.ry = 10;
-          });
+          // g.nodes().forEach(function(v) {
+          //   var node = g.node(v);
+          //   // console.log(node);
+          //   // console.log(g.nodes())
+          //   // Round the corners of the nodes
+          //   //node.rx = node.ry = 10;
+          // });
         }
 
 var setupShapes = function(render) {
@@ -278,6 +299,17 @@ var setupShapes = function(render) {
             { dx: 10, dy: 10 },
             { dx: -10, dy: 10 },
             { dx: -10, dy: -10 }
+          ]);
+  render.shapes().swimlane = makeBox([
+            { x: 0, y: 100 },
+            { x: -100, y: 0 },
+            { x: 0, y: -100 },
+            { x: 100, y: 0 }
+          ],[ 
+            { dx: 100, dy: -100 },
+            { dx: 100, dy: 100 },
+            { dx: -100, dy: 100 },
+            { dx: -100, dy: -100 }
           ]);                   
   render.shapes().reqresp = makeBox([
             { x: 0, y: 10 },

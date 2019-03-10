@@ -55,15 +55,14 @@ var flatProcessingOfFile = function(links){
   return logs;
 }
 
-var bpmnParser = function(links){
+var bpmnParser = function(links,participants){
   var logs = [];
   for(let i = 0; i < links.length; i++){
     let str = links[i];
     if(str != ''){
       let spaces = str.trim().split(/\s+/);
-      console.log(spaces);
       let task = spaces.splice(3).join("_");
-      let obj = {date : spaces[0], time : spaces[1], ip : spaces[2], method : "TASK", location: task, status : 0}
+      let obj = {date : spaces[0], time : spaces[1], ip : spaces[2], method : "TASK", location: task, status : 0, participant: participants[task]}
       logs.push(obj);
     }
   }
@@ -157,19 +156,36 @@ var createData = function(links, routes, fx){
   return clients;
 }
 
+var getParticipants = function(clients) {
+  var a_p = {};
+  var p = new Set();
+  for(var ip in clients) {
+    for(var a in clients[ip]) {
+      var o = clients[ip][a];
+      p.add(o.participant);
+      if (a_p[o.location] === undefined) {
+        a_p[o.location] = new Set([o.participant]);
+      } else {
+        a_p[o.location].add(o.participant);
+      }
+    }
+  }
+  return {activities: a_p, participants: Array.from(p)};
+}
+
 var links = text.split("\n");
 
 var parseRouteData, sequentialParser, flatParser;
-if(routes !== undefined) parseRouteData = createData(links, routes, readParseURLRouteFile);
-sequentialParser = createData(links, undefined, readParseFile);
-flatParser = createData(links, undefined, flatProcessingOfFile);
-bpmnParserData = createData(links, undefined, bpmnParser);
+//if(routes !== undefined) parseRouteData = createData(links, routes, readParseURLRouteFile);
+//sequentialParser = createData(links, undefined, readParseFile);
+//flatParser = createData(links, undefined, flatProcessingOfFile);
+bpmnParserData = createData(links, routes, bpmnParser); //routes used as participants
 console.log(bpmnParserData);
 var data = {};
 // data.IgnoreURIs = flatParser;
 // data.FullURIs = sequentialParser;
 // data.TemplateURIs = parseRouteData;
-data.bpmnActivites = bpmnParserData;
+data.bpmnActivites = getParticipants(bpmnParserData);
 
 data.FullURIs = bpmnParserData;
 
@@ -251,10 +267,39 @@ function expand_middle(rows,i,end_join_point, start_join_point, expanded_rows)
 }
 
 
+function filterParticipant(rows){
+  let p = "?";
+  let a_p = {};
+  var output_rows = [];
+  for(let i = 0; i< rows.length; i++) {
+    var r = rows[i].trim();
+    var ra = r.split(" ");
+    if (ra[0] == "participant") {
+      p = ra[1];
+    } else {
+      output_rows.push(r);
+      if (r !== "...") {
+        a_p[r.replace(/ /g,"_")] = p;
+        // if (a_p[r] === undefined) {
+        //   a_p[r] = new Set([p]);
+        // } else {
+        //   a_p[r].add(p);
+        // }
+      }
+    };
+  }
+  console.log(a_p);
+  return {rows: output_rows, a_p};
+}
+
 function live(text,auto) {
   delay(()=>{
     var data;
     var rows = text.split("\n");
+
+    var p_rows = filterParticipant(rows);
+
+    rows = p_rows.rows;
 
     var expanded_rows = [];
     for(let i = 0; i< rows.length; i++) {
@@ -288,7 +333,7 @@ function live(text,auto) {
       })
 
     timed_rows = client_rows.map((l,i) => { return i + " " + i + " " + l }); //.reverse();
-    data = localParser(timed_rows.join("\n"));
+    data = localParser(timed_rows.join("\n"), p_rows.a_p);
 
     console.log(data);
 
@@ -310,7 +355,7 @@ function live(text,auto) {
 
     var ret2 = [];
     Object.keys(clients).forEach((e)=>{ret2.push(clients[e])}); //select all clients
-    drawGraph(ret2);  
+    drawGraph(ret2,data.bpmnActivites);  
   });
 }
 

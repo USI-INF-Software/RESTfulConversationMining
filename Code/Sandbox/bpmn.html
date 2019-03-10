@@ -35,20 +35,6 @@
   <body>
     <div style="width: 100vw">      
       <div id="Container" style="display: flex; justify-content: space-around">
-      <div id="inputlog">
-        <h4>Conversation Log</h4>
-        <textarea id="logtext" onkeyup="live(this.value,getElementById('autolive').checked)">Submit Application
-Check Application
-Approve Application
-
-Submit Application
-Check Application
-Reject Application
-</textarea><div id="div-url-templates" style="display: none">
-        <h4>Task User Mapping</h4>
-        <textarea id="routestext" onkeyup="live(getElementById('logtext').value,getElementById('autolive').checked)">
-</textarea></div>
-      </div>
 
        <div style="flex: 1">
         <h4>Conversation Mining</h4>
@@ -91,14 +77,26 @@ Reject Application
       
       <!-- <svg width="200px" height="200px"></svg> -->
     </div>
-    <div style="display: flex; flex: 1; align-items: stretch;" id="bigcontainer">
+    <div style="display: flex; flex: 1; align-items: stretch; flex-direction: row" id="bigcontainer">
+            <div id="inputlog" style="flex: 1; display: flex; flex-direction: column">
+        <h4>Conversation Log</h4>
+        <textarea id="logtext" style="flex: 1" onkeyup="live(this.value,getElementById('autolive').checked)">Submit Application
+Check Application
+Approve Application
+
+Submit Application
+Check Application
+Reject Application
+</textarea>
+      </div>
       <div style="flex: 3;">
         <h4>Reconstructed BPMN Control Flow Model</h4>
-        <svg id="restalk" style="resize: vertical; width: 100%; height: 90%"> </svg>
+        <svg id="restalk" style="resize: vertical; width: 100%; min-height: 100vh"> </svg>
       </div>
-      <div id="smallContainer" style="display: flex; flex: 1; flex-direction: column">
+    </div>
+      <div id="smallContainer" style="display: block;">
         <h4>Statistics</h4>
-        <div id="pieCharts" style="display: block;">
+        <div id="pieCharts" style="display: flex; flex-direction: row">
           <div id="piechart-1">
           </div>
           <div id="piechart-2">
@@ -110,7 +108,6 @@ Reject Application
           <!-- <svg id="vizPattern"> </svg> -->
         </div>
       </div>
-    </div>
     <div id="Patterns" style="display: flex; height: 100vh">
       <div id="PatternContainer"style="display: flex">
         <div id="CandidatePatternMenu" style="flex: 1">
@@ -419,7 +416,7 @@ var visualizePattern = function(obj, value){
     i++;
   }
   console.log(obj);
-  let vizg = new dagreD3.graphlib.Graph()
+  let vizg = new dagreD3.graphlib.Graph({compound:true,rankdir:"LR"})
   .setGraph({})
   .setDefaultEdgeLabel(function() { return {}; });
   let start = "start-"+value;
@@ -515,12 +512,12 @@ var fixVisualizationConfig = function(nfc, eft, edc, sep, statusColoring){
   clearPatternMenu();
 }
 //Draw the Graph for the selected IP.
-var drawGraph = function(dataObject){
+var drawGraph = function(dataObject,bpmnActivities){
 
   progress("init",0);
 
-  var g = new dagreD3.graphlib.Graph()
-  .setGraph({})
+  var g = new dagreD3.graphlib.Graph({compound:true})
+  .setGraph({rankdir:"TB", marginy: 50})
   .setDefaultEdgeLabel(function() { return {}; });
   globalGraph = g;
   var nfc = document.getElementById("nfc");
@@ -560,10 +557,13 @@ var drawGraph = function(dataObject){
 
   progress("start");
 
+  // g.setNode("Cluster_Start", {label: "", style: 'stroke: red; fill: white;'});
+
   for(let client in dataObject){
     let start = "start-"+client;
     g.setNode(start, {shape: "circle", class : "start" + " tpIpColoring-"+client, label: client});
     g.setNode("end-"+client, {shape: "circle", style: "stroke-width: 4; stroke: black", class : "start" + " tpIpColoring-"+client, label: client})
+    // g.setParent(start,"Cluster_Start");
     let length = dataObject[client].length;
     let cl = dataObject[client];
     obj = seqPreservingComparison(cl, length, nodes, start, incomingXorNodes, "end-"+client, client);
@@ -586,7 +586,7 @@ var drawGraph = function(dataObject){
   var minDelay = obj.MIN;
 
   progress("draw graph");
-  drawG(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKey, maxDelay, minDelay, totalRequests, endConnections, statusObj);
+  drawG(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKey, maxDelay, minDelay, totalRequests, endConnections, statusObj, bpmnActivities);
 
   progress("node classes");
   setNodeClasses(g, nodes, totalRequestsData);
@@ -607,7 +607,7 @@ var drawGraph = function(dataObject){
   globalNodes = nodes;
   globalGraph = g;
   convDrawn = totalTpIpArray.length;
-  console.log(comparisonTableData);
+  //console.log(comparisonTableData);
   progress("pies");
   try {
     let chart1 = displayPieChar(numOfNodes.data, numOfNodes.options, "piechart-1", rainbows.nodesRainbow, undefined);
@@ -650,6 +650,16 @@ var setStyleShared = function(rainbow){
   document.getElementsByTagName("STYLE")[5].disabled = false;
 }
 var renderSvg = function(g, clazz, rainbow, rules, convSize){
+  // dagre.layout(g);
+  g.nodes().forEach(function(v) {
+     if (v.indexOf("Participant_") == 0) {
+       // console.log("Node " + v + ": " + JSON.stringify(g.node(v)));
+       g.node(v).height = 1000;
+       g.node(v).y = 0;
+       // console.log("Node " + v + ": " + JSON.stringify(g.node(v)));
+     }
+  });
+
   var svg = d3.select(clazz);
   svg.select("g").remove();
   var inner = svg.append("g");
@@ -669,6 +679,38 @@ var renderSvg = function(g, clazz, rainbow, rules, convSize){
   // Center the graph (Fixed)
 
   var dom_svg = document.querySelector(clazz);
+
+  //resize clusters as swimlanes
+  var min_y;
+  var max_y;
+  dom_svg.querySelectorAll(".clusters .cluster").forEach((c)=>{
+    let y0 = c.transform.baseVal[0].matrix.f;
+    let rect = c.querySelector("rect");
+    let y = y0+rect.y.animVal.value;
+    let h = rect.height.animVal.value;
+    if (min_y === undefined) {
+      min_y = y;
+    } else if (min_y > y) {
+      min_y = y;
+    }
+    if (max_y === undefined) {
+      max_y = y+h;
+    } else if (max_y < y+h) {
+      max_y = y+h;
+    }
+  });
+  // console.log(min_y,max_y);
+  dom_svg.querySelectorAll(".clusters .cluster").forEach((c)=>{
+    let rect = c.querySelector("rect");
+    console.log(rect.y);
+    let y = rect.y.animVal.value;
+    c.transform.baseVal[0].matrix.f = -y;
+    rect.height.baseVal.value = max_y;
+    let glabel = c.querySelector("g.label");
+    let w = rect.width.baseVal.value;
+
+    glabel.innerHTML = glabel.innerHTML + '<path d="m '+(-w/2)+','+(y+20)+' L '+w/2+','+(y+20)+'" style="stroke:black; stroke-dasharray: 1 0 1"></path>';
+  });
 
   // console.log("svg.width "+dom_svg.clientWidth);
   // console.log("g.width "+g.graph().width);
