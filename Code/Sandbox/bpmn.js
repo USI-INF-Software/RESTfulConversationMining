@@ -279,7 +279,9 @@ function filterParticipant(rows){
     } else {
       output_rows.push(r);
       if (r !== "...") {
-        a_p[r.replace(/ /g,"_")] = p;
+        let rkey = r.replace(/ /g,"_");
+        if (a_p[rkey] === undefined)
+          a_p[rkey] = p;
         // if (a_p[r] === undefined) {
         //   a_p[r] = new Set([p]);
         // } else {
@@ -321,6 +323,7 @@ function live(text,auto) {
     console.log("Expanded ... log:");
     console.log(expanded_rows);
     console.log(expanded_rows.join("\n"));
+    document.getElementById("explog").value = expanded_rows.join("\n");
 
     var client_id = 0;
       var client_rows = [];

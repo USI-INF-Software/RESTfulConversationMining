@@ -79,7 +79,7 @@
     </div>
     <div style="display: flex; flex: 1; align-items: stretch; flex-direction: row" id="bigcontainer">
             <div id="inputlog" style="flex: 1; display: flex; flex-direction: column">
-        <h4>Conversation Log</h4>
+        <h4>BPMN Sketch DSL</h4>
         <textarea id="logtext" style="flex: 1" onkeyup="live(this.value,getElementById('autolive').checked)">Submit Application
 Check Application
 Approve Application
@@ -89,11 +89,17 @@ Check Application
 Reject Application
 </textarea>
       </div>
+    <div style="flex: 1; display: flex; flex-direction: column">
+      <h4>Expanded Log</h4>
+      <textarea id="explog" style="flex: 1">
+      </textarea>
+    </div>
       <div style="flex: 3;">
         <h4>Reconstructed BPMN Control Flow Model</h4>
         <svg id="restalk" style="resize: vertical; width: 100%; min-height: 100vh"> </svg>
       </div>
     </div>
+
       <div id="smallContainer" style="display: block;">
         <h4>Statistics</h4>
         <div id="pieCharts" style="display: flex; flex-direction: row">
