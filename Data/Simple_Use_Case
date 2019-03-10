@@ -1,0 +1,18 @@
+participant Employee
+
+FillInReimbursementRequest 
+MarkTheBills 
+ScanAndAttach 
+PrintReimburement 
+PrepareTheSet 
+SendTheSet 
+...
+
+participant Head
+
+...
+SendTheSet 
+ReceiveTheSet 
+CheckDescription 
+CheckCosts 
+RejectRequest 
