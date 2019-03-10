@@ -294,6 +294,152 @@ function filterParticipant(rows){
   return {rows: output_rows, a_p};
 }
 
+function expandLog(rows){
+  let dot_fragments = [];
+  let normal_fragments = [];
+  let current_fragment = [];
+  let target;
+  let output_fragments = [];
+
+  function match(joinpoint) {
+    let match_fragments = [];
+    normal_fragments.forEach(f=>{
+      f.forEach(r=>{
+        if (r==joinpoint) {
+          match_fragments.push(f);
+        }
+      })
+    });
+    dot_fragments.forEach(f=>{
+      f.forEach(r=>{
+        if (r==joinpoint) {
+          match_fragments.push(f);
+        }
+      })
+    })
+    return match_fragments;
+  }
+
+  function match2(joinpoint,joinpoint2) {
+    let match_fragments = [];
+    normal_fragments.forEach(f=>{
+      let found = false;
+      f.forEach(r=>{
+        if (!found && (r==joinpoint)) {
+          found = true;
+        }
+        if (found && (r==joinpoint2)) {
+          match_fragments.push(f);
+        }
+      })
+    });
+    // dot_fragments.forEach(f=>{
+    //   f.forEach(r=>{
+    //     if (r==joinpoint) {
+    //       match_fragments.push(f);
+    //     }
+    //   })
+    // })
+    return match_fragments;
+  }
+
+  function exp_middle(joinpoint_before,joinpoint_after,fragment,i){
+    //look for matching fragments
+    let match_fragments = match2(joinpoint_before,joinpoint_after);
+    match_fragments.forEach(f=>{
+      let output_fragment = fragment.slice(0,i-1);
+      var jbfi = f.indexOf(joinpoint_before);
+      var jafi = f.indexOf(joinpoint_after);
+      for(let fi = jbfi; fi<jafi; fi++){
+          output_fragment.push(f[fi]);
+      }
+      fragment.slice(i+1).forEach(r=>{
+        output_fragment.push(r);
+      })
+      output_fragments.push(output_fragment);
+    });
+  }
+
+  function exp_after(joinpoint,fragment,i){
+    //look for matching fragments
+    let match_fragments = match(joinpoint);
+    match_fragments.forEach(f=>{
+      let output_fragment = fragment.slice(0,i-1);
+      var jfi = f.indexOf(joinpoint);
+      for(let fi = jfi; fi<f.length; fi++){
+          output_fragment.push(f[fi]);
+      }
+      output_fragments.push(output_fragment);
+    });
+  }
+
+  function exp_before(joinpoint,fragment,i){
+    //look for matching fragments
+    let match_fragments = match(joinpoint);
+    match_fragments.forEach(f=>{
+      let output_fragment = [];
+      var jfi = f.indexOf(joinpoint);
+      for(let fi = 0; fi<jfi; fi++){
+          output_fragment.push(f[fi]);
+      }
+      fragment.slice(i+1).forEach(r=>{
+        output_fragment.push(r);
+      })
+      output_fragments.push(output_fragment);
+    });
+  }
+
+  //cut the log into fragments
+  target = normal_fragments;
+  for(let i = 0; i< rows.length; i++) {
+    var r = rows[i].trim();
+    if (r.length > 0) {
+      current_fragment.push(r);
+      if (r == "...") {
+        target = dot_fragments;
+      }
+    } else {
+      target.push(current_fragment);
+      current_fragment = [];
+      target = normal_fragments;
+    }
+  }
+
+  for(let fi = 0; fi< dot_fragments.length; fi++) {
+    let frows = dot_fragments[fi];
+
+    for(let i = 0; i< frows.length; i++) {
+      if (frows[i] == "...") {
+        
+        if (i+1<frows.length && frows[i+1].length > 0 && i-1>0 && frows[i-1].length > 0) { //something afterwards and before
+          //expand_middle(rows,i,rows[i+1].trim(),rows[i-1].trim(),expanded_rows);
+          exp_middle(frows[i-1],frows[i+1],frows,i);
+        } else
+        if (i+1<frows.length && frows[i+1].length > 0) { //something afterwards
+          //i += expand_before(rows,i,rows[i+1].trim(),expanded_rows);
+          exp_before(frows[i+1],frows,i);
+        } else { //something after
+          exp_after(frows[i-1],frows,i);
+          //expand_after(rows,i-2,rows[i-1].trim(),expanded_rows);
+        }
+      } else {
+        //expanded_rows.push(rows[i].trim());
+      }
+    }
+  }
+
+  let expanded_rows = [];
+  function dumpFragment(f){
+    f.forEach(r=>{
+      expanded_rows.push(r);
+    });
+    expanded_rows.push("");
+  }
+  normal_fragments.forEach(dumpFragment);
+  output_fragments.forEach(dumpFragment);
+  return expanded_rows;
+}
+
 function live(text,auto) {
   delay(()=>{
     var data;
@@ -303,22 +449,9 @@ function live(text,auto) {
 
     rows = p_rows.rows;
 
-    var expanded_rows = [];
-    for(let i = 0; i< rows.length; i++) {
-      if (rows[i].trim() == "...") {
-        
-        if (i+1<rows.length && rows[i+1].length > 0 && i-1>0 && rows[i-1].length > 0) { //something afterwards and before
-          expand_middle(rows,i,rows[i+1].trim(),rows[i-1].trim(),expanded_rows);
-        } else
-        if (i+1<rows.length && rows[i+1].length > 0) { //something afterwards
-          i += expand_before(rows,i,rows[i+1].trim(),expanded_rows);
-        } else {
-          expand_after(rows,i-2,rows[i-1].trim(),expanded_rows);
-        }
-      } else {
-        expanded_rows.push(rows[i].trim());
-      }
-    };
+    expanded_rows = expandLog(p_rows.rows);
+
+    
 
     console.log("Expanded ... log:");
     console.log(expanded_rows);
