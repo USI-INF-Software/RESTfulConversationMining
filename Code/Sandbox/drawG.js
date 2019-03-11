@@ -1,6 +1,9 @@
 var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKey, maxDelay, minDelay, totalRequests, endConnections, statusObj, bpmnActivities){
 
   function setParticipant(key, status, id) {
+    if (bpmnActivities === undefined)
+      return;
+
     let P = Array.from(bpmnActivities.activities[nodes[key][status].statusArray[0].key.replace("TASK ","")])[0];
     console.log(P);
     if (P !== undefined) {
@@ -71,9 +74,11 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
     }
   }
   //Set Up Participants
-  for(p in bpmnActivities.participants) {
-    g.setNode("Participant_"+bpmnActivities.participants[p], {label: bpmnActivities.participants[p], clusterLabelPos: 'top', style: 'stroke: black; fill: white; stroke-dasharray: 1 0 1;'});
-    console.log("Participant_"+bpmnActivities.participants[p]);
+  if (bpmnActivities !== undefined) {
+    for(p in bpmnActivities.participants) {
+      g.setNode("Participant_"+bpmnActivities.participants[p], {label: bpmnActivities.participants[p], clusterLabelPos: 'top', style: 'stroke: black; fill: white; stroke-dasharray: 1 0 1;'});
+      console.log("Participant_"+bpmnActivities.participants[p]);
+    }
   }
   //Set Up Edges
   for(var key in nodes){
