@@ -294,6 +294,10 @@ function filterParticipant(rows){
   return {rows: output_rows, a_p};
 }
 
+function same(f1,f2){
+  return (f1.join("\n") == f2.join("\n"));
+}
+
 function expandLog(rows){
   let dot_fragments = [];
   let normal_fragments = [];
@@ -301,7 +305,8 @@ function expandLog(rows){
   let target;
   let output_fragments = [];
 
-  function match(joinpoint) {
+
+  function match_before(joinpoint,current) {
     let match_fragments = [];
     normal_fragments.forEach(f=>{
       f.forEach(r=>{
@@ -311,12 +316,35 @@ function expandLog(rows){
       })
     });
     dot_fragments.forEach(f=>{
+      if (!same(f,current)) {
+        for(let i = 0; i<f.length; i++) {
+          if (f[i]==joinpoint && f[i-1] != '...') {
+            match_fragments.push(f);
+          }
+        };
+      }
+    });
+    return match_fragments;
+  }
+
+  function match_after(joinpoint,current) {
+    let match_fragments = [];
+    normal_fragments.forEach(f=>{
       f.forEach(r=>{
         if (r==joinpoint) {
           match_fragments.push(f);
         }
       })
-    })
+    });
+    dot_fragments.forEach(f=>{
+      if (!same(f,current)) {
+        for(let i = 0; i<f.length; i++) {
+          if (f[i]==joinpoint && f[i+1] != '...') {
+            match_fragments.push(f);
+          }
+        };
+      }
+    });
     return match_fragments;
   }
 
@@ -345,7 +373,7 @@ function expandLog(rows){
 
   function exp_middle(joinpoint_before,joinpoint_after,fragment,i){
     //look for matching fragments
-    let match_fragments = match2(joinpoint_before,joinpoint_after);
+    let match_fragments = match2(joinpoint_before,joinpoint_after,fragment);
     match_fragments.forEach(f=>{
       let output_fragment = fragment.slice(0,i-1);
       var jbfi = f.indexOf(joinpoint_before);
@@ -362,7 +390,7 @@ function expandLog(rows){
 
   function exp_after(joinpoint,fragment,i){
     //look for matching fragments
-    let match_fragments = match(joinpoint);
+    let match_fragments = match_after(joinpoint,fragment);
     match_fragments.forEach(f=>{
       let output_fragment = fragment.slice(0,i-1);
       var jfi = f.indexOf(joinpoint);
@@ -375,7 +403,7 @@ function expandLog(rows){
 
   function exp_before(joinpoint,fragment,i){
     //look for matching fragments
-    let match_fragments = match(joinpoint);
+    let match_fragments = match_before(joinpoint,fragment);
     match_fragments.forEach(f=>{
       let output_fragment = [];
       var jfi = f.indexOf(joinpoint);
@@ -408,6 +436,7 @@ function expandLog(rows){
   for(let fi = 0; fi< dot_fragments.length; fi++) {
     let frows = dot_fragments[fi];
 
+    //this becomes the core recursion...
     for(let i = 0; i< frows.length; i++) {
       if (frows[i] == "...") {
         
@@ -428,6 +457,16 @@ function expandLog(rows){
     }
   }
 
+  function dedup(f1,f2) {
+    let o = {};
+    f1.concat(f2).forEach(f=>{o[f.join(",")] = f});
+    return Object.values(o);
+
+    // return f1.concat(f2);
+  }
+
+  unique_fragments = dedup(normal_fragments, output_fragments);
+
   let expanded_rows = [];
   function dumpFragment(f){
     f.forEach(r=>{
@@ -435,8 +474,9 @@ function expandLog(rows){
     });
     expanded_rows.push("");
   }
-  normal_fragments.forEach(dumpFragment);
-  output_fragments.forEach(dumpFragment);
+  // normal_fragments.forEach(dumpFragment);
+  // output_fragments.forEach(dumpFragment);
+  unique_fragments.forEach(dumpFragment);
   return expanded_rows;
 }
 
