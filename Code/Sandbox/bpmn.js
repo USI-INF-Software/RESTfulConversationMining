@@ -267,6 +267,35 @@ function expand_middle(rows,i,end_join_point, start_join_point, expanded_rows)
 }
 
 
+function filterCutParticipant(rows){
+  let p = "?";
+  let a_p = {};
+  var output_rows = [];
+  for(let i = 0; i< rows.length; i++) {
+    var r = rows[i].trim();
+    var ra = r.split(" ");
+    if (ra[0] == "participant") {
+      p = ra[1];
+    } else {
+      if (p == "?") {
+        output_rows.push(r);
+      } else
+      if (r !== "...") {
+        let rkey = r.replace(/ /g,"_");
+        if (a_p[rkey] === undefined)
+          a_p[rkey] = p;
+        // if (a_p[r] === undefined) {
+        //   a_p[r] = new Set([p]);
+        // } else {
+        //   a_p[r].add(p);
+        // }
+      }
+    };
+  }
+  console.log(a_p);
+  return {rows: output_rows, a_p};
+}
+
 function filterParticipant(rows){
   let p = "?";
   let a_p = {};
@@ -417,24 +446,7 @@ function expandLog(rows){
     });
   }
 
-  //cut the log into fragments
-  target = normal_fragments;
-  for(let i = 0; i< rows.length; i++) {
-    var r = rows[i].trim();
-    if (r.length > 0) {
-      current_fragment.push(r);
-      if (r == "...") {
-        target = dot_fragments;
-      }
-    } else {
-      target.push(current_fragment);
-      current_fragment = [];
-      target = normal_fragments;
-    }
-  }
-
-  for(let fi = 0; fi< dot_fragments.length; fi++) {
-    let frows = dot_fragments[fi];
+  function scan(frows){
 
     //this becomes the core recursion...
     for(let i = 0; i< frows.length; i++) {
@@ -457,26 +469,82 @@ function expandLog(rows){
     }
   }
 
-  function dedup(f1,f2) {
-    let o = {};
-    f1.concat(f2).forEach(f=>{o[f.join(",")] = f});
-    return Object.values(o);
-
-    // return f1.concat(f2);
+  function cut(rows){
+  //cut the log into fragments
+    target = normal_fragments;
+    for(let i = 0; i< rows.length; i++) {
+      var r = rows[i].trim();
+      if (r.length > 0) {
+        current_fragment.push(r);
+        if (r == "...") {
+          target = dot_fragments;
+        }
+      } else {
+        target.push(current_fragment);
+        current_fragment = [];
+        target = normal_fragments;
+      }
+    }
   }
 
-  unique_fragments = dedup(normal_fragments, output_fragments);
+  cut(rows);
 
+  initial_normal_fragments = normal_fragments.slice();
+  initial_dot_fragments = dot_fragments.slice();
+
+  let hasDots = true;
   let expanded_rows = [];
-  function dumpFragment(f){
-    f.forEach(r=>{
-      expanded_rows.push(r);
-    });
-    expanded_rows.push("");
+  let iterations = 0;
+  let prev_unique_fragments = [];
+  while (hasDots) {
+    output_fragments = [];
+    
+    for(let fi = 0; fi< dot_fragments.length; fi++) {
+      let frows = dot_fragments[fi];
+      scan(frows);
+    }
+
+    function dedup(f) {
+      let o = {};
+      f.forEach(f=>{o[f.join(",")] = f});
+      return Object.values(o);
+
+      // return f1.concat(f2);
+    }
+
+    //output fragments may contain ...
+    unique_fragments = dedup(normal_fragments.concat(output_fragments));
+
+    expanded_rows = [];
+    hasDots = false;
+    function dumpFragment(f){
+      f.forEach(r=>{
+        expanded_rows.push(r);
+        if (r === "...") hasDots = true;
+      });
+      expanded_rows.push("");
+    }
+    // normal_fragments.forEach(dumpFragment);
+    // output_fragments.forEach(dumpFragment);
+    unique_fragments.forEach(dumpFragment);
+
+    console.log(iterations,expanded_rows.join("\n"));
+
+    if (!hasDots) {
+      return expanded_rows;
+    } else if (iterations > 10) {
+        expanded_rows = [];
+        dedup(normal_fragments).forEach(dumpFragment);
+        return expanded_rows;
+    }
+
+    normal_fragments = initial_normal_fragments.slice();
+    dot_fragments = initial_dot_fragments.slice();
+
+    cut(expanded_rows);
+
+    iterations++;
   }
-  // normal_fragments.forEach(dumpFragment);
-  // output_fragments.forEach(dumpFragment);
-  unique_fragments.forEach(dumpFragment);
   return expanded_rows;
 }
 
@@ -485,7 +553,7 @@ function live(text,auto) {
     var data;
     var rows = text.split("\n");
 
-    var p_rows = filterParticipant(rows);
+    var p_rows = filterCutParticipant(rows);
 
     rows = p_rows.rows;
 
@@ -508,7 +576,16 @@ function live(text,auto) {
         }
       })
 
-    timed_rows = client_rows.map((l,i) => { return i + " " + i + " " + l }); //.reverse();
+    var nextDate = function(d){
+      let date = d;
+      return function() {
+        date.setDate(date.getDate() + 1);
+        return date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear();
+      }
+    };
+    nextDate = nextDate(new Date())
+
+    timed_rows = client_rows.map((l,i) => { return nextDate() + " 12:00:00 " + l }); //.reverse();
     data = localParser(timed_rows.join("\n"), p_rows.a_p);
 
     console.log(data);
