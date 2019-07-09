@@ -559,7 +559,7 @@ function live(text,auto) {
 
     // expanded_rows = expandLog(p_rows.rows);
 
-    expanded_rows = expandLog(rows);
+    expanded_rows = expandLog_dots(rows);
 
     console.log("Expanded ... log:");
     console.log(expanded_rows);
