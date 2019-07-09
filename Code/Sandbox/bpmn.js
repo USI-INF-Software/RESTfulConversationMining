@@ -553,13 +553,13 @@ function live(text,auto) {
     var data;
     var rows = text.split("\n");
 
-    var p_rows = filterCutParticipant(rows);
+    var p_rows = filterParticipant(rows);
 
     rows = p_rows.rows;
 
-    expanded_rows = expandLog(p_rows.rows);
+    // expanded_rows = expandLog(p_rows.rows);
 
-    
+    expanded_rows = expandLog(rows);
 
     console.log("Expanded ... log:");
     console.log(expanded_rows);
