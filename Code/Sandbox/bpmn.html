@@ -46,12 +46,12 @@
           <label for="multiSelect-Clients">Client IDs</label>
           <!-- <button class="dropbtn" onmouseover="displayClients()">Clients</button> -->
          </div>
-         <div style="display: flex; flex-direction: column">
+         <div style="display: none; flex-direction: column">
           <select id="multiSelect" multiple="multiple">
           </select><label for="multiSelect">Time Intervals</label>
          </div>
         <div id="Btns" style="display: flex; flex-direction: column; justify-content: center;">
-          <select id="miningType" onchange="miningTypeChanged(this);">
+          <select id="miningType" onchange="miningTypeChanged(this);" style="display: none">
             <option id="full-url">Full URL</option><option id="no-url">Ignore URL</option><option id="template-url">Abstract URL Templates</option></select>
           <button id="multiSelectForm" type="submit"/> Draw BPMN </button>
           <label for="autolive">Auto-redraw<input id="autolive" type="checkbox"></label>
@@ -64,9 +64,10 @@
           Edge Frequency Thickness: <input type="checkbox" id="eft"> <br />
           Edge Delay Coloring: <input type="checkbox" id="edc"> <br />
           Show Edge Probability: <input type="checkbox" id="sep"> <br />
+          <div style="display:none">
           Status Coloring: <input type="checkbox" id="statusColoring"> <br />
           Method Coloring: <input type="checkbox" id="methodColoring"> <br />
-
+        </div>
           <!-- <form  id="formId" onsubmit="getPattern()">
           <input type="file" name="fname" id="dataId" style="display: none;">
           <input type="button" value="Add a Pattern" onclick="document.getElementById('dataId').click();" />
