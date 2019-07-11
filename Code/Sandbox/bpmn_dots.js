@@ -1,5 +1,6 @@
-
 function expandLog_dots(rows){
+
+function expandLog_dots_once(rows,rules){
   let dot_fragments = [];
   let normal_fragments = [];
   let current_fragment = [];
@@ -163,8 +164,7 @@ function expandLog_dots(rows){
 
   initial_normal_fragments = normal_fragments.slice();
   initial_dot_fragments = dot_fragments.slice();
-
-  //... B D
+  initial_all_fragments = initial_normal_fragments.concat(initial_dot_fragments);
 
   function make_rules(dot_fragments){
     rules = { after: {}, before: {}, middle: {}, fragments: {} };
@@ -183,7 +183,8 @@ function expandLog_dots(rows){
           if ((frows[0] == "...") && (frows[frows.length-1] == "...") && (frows.length > 3)) {
             push(rules.fragments, {key: frows[1]+","+frows[frows.length-2], rows:frows, add_middle: frows.slice(2,frows.length-2)});
           }
-          else
+          // but fragments are also before and after rules
+          // else
           for(let i = 0; i< frows.length; i++) {
                 if (frows[i] == "...") {
                   
@@ -212,8 +213,8 @@ function expandLog_dots(rows){
 
   }
 
-
-  rules = make_rules(initial_dot_fragments);
+  if (!rules)
+    rules = make_rules(initial_dot_fragments);
 
 
   function match_after_rules(rules, el, i, nf) {
@@ -258,10 +259,33 @@ function expandLog_dots(rows){
 
   let expanded_rows = [];
   output_fragments = [];
+
   initial_normal_fragments.forEach((nf)=>{
     for(let i = 0; i< nf.length; i++) {
       if (nf[i] == "...") {
         //should not happen
+      } else {
+         output_fragments = output_fragments.concat(match_after_rules(rules.after, nf[i], i, nf))
+                                            .concat(match_before_rules(rules.before, nf[i], i, nf))
+                                            .concat(match_middle_rules(rules.middle, nf[i], i, nf));
+      }  
+    }
+  });
+
+  //filter dot fragments which are not fragments, they have at least some starting activity or some ending one
+  function instanceable(dfs) {
+    let idf = [];
+    dfs.forEach( (df) => {
+      if (df[0] != "..." || df[df.length-1] != "...")
+        idf.push(df);
+    });
+    return idf;
+  }
+
+  instanceable(initial_dot_fragments).forEach((nf)=>{
+    for(let i = 0; i< nf.length; i++) {
+      if (nf[i] == "...") {
+        //can happen
       } else {
          output_fragments = output_fragments.concat(match_after_rules(rules.after, nf[i], i, nf))
                                             .concat(match_before_rules(rules.before, nf[i], i, nf))
@@ -313,7 +337,7 @@ function expandLog_dots(rows){
   output_fragments = output_fragments.concat(match_middle_fragment_rules(rules.fragments,rules.middle))
                                      .concat(match_after_before_rules(rules.after,rules.before));
 
-  console.log(output_fragments);
+  // console.log(output_fragments);
 
     function dedup(f) {
       let o = {};
@@ -337,8 +361,9 @@ function expandLog_dots(rows){
   unique_fragments.forEach(dumpFragment);
 
   console.log("hasDots",hasDots);
+  console.log(expanded_rows.join("\n"));
 
-  return expanded_rows;
+  return {hasDots, expanded_rows, rules};
 
   // let hasDots = true;
   // let expanded_rows = [];
@@ -394,4 +419,53 @@ function expandLog_dots(rows){
   //   iterations++;
   // }
   return expanded_rows;
+}
+
+  function x_dropdots(drows) {
+    let r = [];
+    // let new_trace = true;
+    let has_dots = false;
+    let t = [];
+    drows.forEach( (dr) => {
+      if (dr == "...") {
+        has_dots = true;
+      };
+      if (dr.length == 0) {
+        if (!has_dots){
+          r = r.concat(t);
+        }
+        t = [];
+      }
+      t.push(dr);
+    });
+    return r;
+  }
+
+  function dropdots(drows) {
+    return drows;
+  }
+
+  let hasDots = true;
+  let inRows = rows;
+  let iterations = 0;
+  let rules;
+
+  while (hasDots) {
+    // let er = expandLog_dots_once(inRows, rules);
+    let er = expandLog_dots_once(inRows);
+
+    if (!er.hasDots) {
+      return er.expanded_rows;
+    }
+
+    if (iterations > 1) {
+      console.log("Iteration limit reached (output still contains dots)");
+      return x_dropdots(er.expanded_rows);
+    }
+
+    inRows = inRows.concat(dropdots(er.expanded_rows));
+    rules = er.rules;
+    iterations++;
+  }
+
 }
