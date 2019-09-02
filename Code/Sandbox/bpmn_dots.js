@@ -435,6 +435,7 @@ function expandLog_dots_once(rows,rules){
           r = r.concat(t);
         }
         t = [];
+        has_dots = false;
       }
       t.push(dr);
     });
@@ -458,7 +459,7 @@ function expandLog_dots_once(rows,rules){
       return er.expanded_rows;
     }
 
-    if (iterations > 1) {
+    if (iterations > 2) {
       console.log("Iteration limit reached (output still contains dots)");
       return x_dropdots(er.expanded_rows);
     }
