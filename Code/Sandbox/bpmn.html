@@ -59,11 +59,13 @@
           <p id="status" style="display: none";></p>
         </div>
         <div id="VisualizationConfig" style="display: none">
-          Show Node Frequency: <input type="checkbox" id="nf" checked onclick="showNodeFrequency(this)"> <br />
+          Show Node Frequency: <input type="checkbox" id="nf" onclick="showNodeFrequency(this)"> <br />
           Node Frequency Coloring: <input type="checkbox" id="nfc"> <br />
           Edge Frequency Thickness: <input type="checkbox" id="eft"> <br />
           Edge Delay Coloring: <input type="checkbox" id="edc"> <br />
           Show Edge Probability: <input type="checkbox" id="sep"> <br />
+          Merge Start Nodes: <input type="checkbox" id="mstart" onchange="mclick()"> <br />
+          Merge End Nodes: <input type="checkbox" id="mend" onchange="mclick()"> <br />
           <div style="display:none">
           Status Coloring: <input type="checkbox" id="statusColoring"> <br />
           Method Coloring: <input type="checkbox" id="methodColoring"> <br />
@@ -154,6 +156,11 @@ Reject Application
   </div>
 </body>
 <script>
+function mclick(){
+  if (document.getElementById('autolive').checked) {
+    live(document.getElementById('logtext').value,true);
+  }
+}
 //Get the Data
 var clients = localStorage.getItem('objectToPass');
 clients = JSON.parse(clients);
@@ -532,6 +539,8 @@ var drawGraph = function(dataObject,bpmnActivities){
   var eft = document.getElementById("eft");
   var edc = document.getElementById("edc");
   var sep = document.getElementById("sep");
+  var mstart = document.getElementById("mstart");
+  var mend = document.getElementById("mend");
   var statusColoring = document.getElementById("statusColoring");
   var methodColoring = document.getElementById("methodColoring");
 
@@ -594,7 +603,7 @@ var drawGraph = function(dataObject,bpmnActivities){
   var minDelay = obj.MIN;
 
   progress("draw graph");
-  drawG(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKey, maxDelay, minDelay, totalRequests, endConnections, statusObj, bpmnActivities);
+  drawG(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKey, maxDelay, minDelay, totalRequests, endConnections, statusObj, bpmnActivities, mstart.checked, mend.checked);
 
   progress("node classes");
   setNodeClasses(g, nodes, totalRequestsData);

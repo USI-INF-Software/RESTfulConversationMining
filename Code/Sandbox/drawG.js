@@ -1,11 +1,57 @@
-var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKey, maxDelay, minDelay, totalRequests, endConnections, statusObj, bpmnActivities){
+var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKey, maxDelay, minDelay, totalRequests, endConnections, statusObj, bpmnActivities, mstart, mend){
+
+  // console.log(nodes);
+  // console.log(endConnections);
+  // console.log(incomingXorNodes);
+
+  function mergeStart(n) {
+    for(var key in n){
+      var size = Object.keys(n[key]).length;
+      if(size == 1){
+        var status = Object.keys(n[key])[0];
+        console.log(n[key][status].statusArray);
+        let sa_key;
+        let dups = [];
+        n[key][status].statusArray.forEach((sa)=>{
+          if (sa_key === undefined) {
+            sa_key = sa.key;
+          } else {
+            if (sa_key == sa.key && sa.startId !== 0 && sa.startId.startsWith("start-")) {
+              dups.push(sa.arrIndex);
+            }
+          }
+        });
+        console.log("dups: ",dups);
+        // dups.forEach((d)=>{
+        //   delete n[key][status].statusArray[d];
+        // });
+        // let i = 0;
+        // while(i<n[key][status].statusArray.length) {
+        //   if (n[key][status].statusArray[i] != undefined) {
+        //     i++;
+        //   } else {
+        //     n[key][status].statusArray.splice(i,1);
+        //   }
+        // }
+        // n[key][status].statusArray.forEach((sa)=>{
+        //   sa.start = sa.startId;
+        // });
+        console.log(n[key][status].statusArray.length);
+      } else {
+        console.log("size "+size,n[key]);
+      }
+    }
+    return n;
+  }
+
+  //nodes = mergeStart(nodes);
 
   function setParticipant(key, status, id) {
     if (bpmnActivities === undefined)
       return;
 
     let P = Array.from(bpmnActivities.activities[nodes[key][status].statusArray[0].key.replace("TASK ","")])[0];
-    console.log(P);
+    console.log("setParticipant",key+" "+status+" "+id,P);
     if (P !== undefined) {
       g.setParent(id, 'Participant_'+ P);
     }
@@ -15,7 +61,6 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
     var size = Object.keys(nodes[key]).length;
     if(size == 1){
       var status = Object.keys(nodes[key])[0];
-      console.log(nodes);
       var str = "inXOR-"+key
       let word = setUpClassForDifferentIpTp(nodes, key, status);
       updateComparisonUniqueness(word, comparisonTableData, key, status);
@@ -39,6 +84,7 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
       if(nodes[key][status].outgoingXOR){
         g.setNode("XOR-"+id, {label: "X", shape: "large_gateway", class: "type-XOR outgoingXOR"});
         setParticipant(key,status,"XOR-"+id);
+
       }
       if((nodes[key][status].statusArray.length) > 1 && Object.keys(incomingXorNodes[key]).length > 1){
         var str = "inXOR-"+key
@@ -157,6 +203,11 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
           var s = spaces[1]
           setParticipant(k,s,"end-"+end);
           setParticipant(k,s,"start-"+end);
+          console.log("start-"+end);
+
+//          g.setEdge(k+' '+s, "end-"+end, {class: "edge-thickness-1 delay-coloring-0"});
+
+ 
           if(nodes[k][s].outgoingXOR){
               g.setEdge("XOR-"+k+' '+s, "end-"+end, {
                 label : roundUp(1/totalRequests[k]*100,1)+"%",
@@ -166,14 +217,101 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
               g.setEdge(k+' '+s, "end-"+end, {class: "edge-thickness-1 delay-coloring-0"});
 
             }
+
           }
-          // g.nodes().forEach(function(v) {
+
+          function mergeXOR(g_sources,f_successors,f_predecessors,prefix,f_connect,xor_prefix,style) {
+
+          function groupBy(xs, kf) {
+            return xs.reduce(function(rv, x) {
+              (rv[kf(x)] = rv[kf(x)] || []).push(x);
+              return rv;
+            }, {});
+          };
+
+          let gg = groupBy(g_sources.filter((v)=>{
+            var node = g.node(v);
+            if (node.shape == "circle") {
+              let x = f_successors(v).filter(n=>{
+                console.log(n);
+                return n.startsWith(xor_prefix);
+              });
+              return (x.length > 0);
+            }
+            return false;
+          }), (v)=>{
+            let s = f_successors(v);
+            return s.join(",");
+          });
+
+          console.log("GroupBY",gg);
+
+          Object.keys(gg).forEach(function(ggk) {
+            let rem = [];
+            let start_targets = [];
+            let clients = [];
+            gg[ggk].forEach((v)=>{
+              var node = g.node(v);
+              if (node.shape == "circle") {
+                console.log(node);
+                clients.push(node.label);
+                let x = f_successors(v).filter(n=>{
+                  return n.startsWith(xor_prefix);
+                });
+                if (x.length > 0) {
+                  rem.push(v);
+                }
+                
+                x.forEach((n)=>{
+                  let before_x = f_predecessors(n);
+                  let all_start = true;
+                  before_x.forEach((bx)=>{
+                    var bx_node = g.node(bx);
+                    if (bx_node.shape != "circle") {
+                      all_start = false;
+                    }
+                  })
+                  if (all_start) {
+                    rem.push(n);
+                    start_targets.push(f_successors(n));
+                  } else {
+                    start_targets.push(n);
+                  }
+                });
+              }
+              
+            });
+            rem.forEach((n)=>{g.removeNode(n); console.log("Removing "+n)});
+
+            g.setNode(prefix+clients.join(","), {shape: "circle", class : "start" + " tpIpColoring-"+clients.join(","), label: clients.join(","), style});
+            start_targets.forEach((st)=>{
+              f_connect(prefix+clients.join(","), st);
+              g.setParent(prefix+clients.join(","),g.parent(st));
+            });
+          });
+
+          // 
+
+          // g.sinks().forEach(function(v) {
           //   var node = g.node(v);
-          //   // console.log(node);
+          //   if (node.shape == "circle") {
+          //     console.log(node);
+          //     console.log(g.predecessors(v));
+          //     console.log(g.predecessors(g.predecessors(v)));
+          //   }
+
           //   // console.log(g.nodes())
           //   // Round the corners of the nodes
           //   //node.rx = node.ry = 10;
           // });
+
+          }//mergeStartXOR
+          if (mstart) {
+            mergeXOR(g.sources(),g.successors.bind(g),g.predecessors.bind(g),"start-",(s,d)=>{g.setEdge(s,d)},"inXOR-");
+          }
+          if (mend) {
+            mergeXOR(g.sinks(),g.predecessors.bind(g),g.successors.bind(g),"end-",(s,d)=>{g.setEdge(d,s)},"XOR-","stroke-width: 4; stroke: black");
+          }
         }
 
 var setupShapes = function(render) {

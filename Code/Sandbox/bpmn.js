@@ -608,7 +608,8 @@ function live(text,auto) {
 
     var ret2 = [];
     Object.keys(clients).forEach((e)=>{ret2.push(clients[e])}); //select all clients
-    drawGraph(ret2,data.bpmnActivites);  
+    drawGraph(ret2,data.bpmnActivites);
+    showNodeFrequency({checked:false});
   });
 }
 
