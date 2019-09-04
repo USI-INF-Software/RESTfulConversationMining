@@ -54,7 +54,8 @@
           <select id="miningType" onchange="miningTypeChanged(this);" style="display: none">
             <option id="full-url">Full URL</option><option id="no-url">Ignore URL</option><option id="template-url">Abstract URL Templates</option></select>
           <button id="multiSelectForm" type="submit"/> Draw BPMN </button>
-          <label for="autolive">Auto-redraw<input id="autolive" type="checkbox"></label>
+          <label for="autolive">Auto-redraw: <input id="autolive" type="checkbox"></label>
+          <label for="expanded_log_toggle">Expanded Log: <input type="checkbox" id="expanded_log_toggle" onchange="exlogclick()"> </label>
           <progress id="progress" style="display: none";></progress>
           <p id="status" style="display: none";></p>
         </div>
@@ -93,7 +94,7 @@ Check Application
 Reject Application
 </textarea>
       </div>
-    <div style="flex: 1; display: flex; flex-direction: column">
+    <div style="flex: 1; display: none; flex-direction: column" id="expanded_log">
       <h4>Expanded Log</h4>
       <textarea id="explog" style="flex: 1">
       </textarea>
@@ -160,6 +161,9 @@ function mclick(){
   if (document.getElementById('autolive').checked) {
     live(document.getElementById('logtext').value,true);
   }
+}
+function exlogclick(){
+  document.getElementById('expanded_log').style.display = document.getElementById('expanded_log_toggle').checked ? "flex" : "none";
 }
 //Get the Data
 var clients = localStorage.getItem('objectToPass');
