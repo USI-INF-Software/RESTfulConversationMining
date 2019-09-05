@@ -323,6 +323,44 @@ function filterParticipant(rows){
   return {rows: output_rows, a_p};
 }
 
+function filterParticipantOverride(rows){
+  let seenParticipant = false;
+  let p = "?";
+  let a_p = {};
+  var output_rows = [];
+  for(let i = 0; i< rows.length; i++) {
+    var r = rows[i].trim();
+    var ra = r.split(" ");
+    if (ra[0] == "participant") {
+      seenParticipant = true;
+      p = ra[1];
+    } else {
+      var rp = r.split(":");
+      if (rp.length != 2) {
+        output_rows.push(r);
+        if (r !== "...") {
+          let rkey = r.replace(/ /g,"_");
+          if (a_p[rkey] === undefined)
+            a_p[rkey] = p;
+        }
+      } else {
+        output_rows.push(rp[1].trim());
+        if (rp[1].trim() !== "...") {
+          let rkey = rp[1].trim().replace(/ /g,"_");
+          if (a_p[rkey] === undefined)
+            a_p[rkey] = rp[0];
+        }
+        if (!seenParticipant) {
+          p = rp[0];
+        }
+      }
+    };
+  }
+  console.log(a_p);
+  return {rows: output_rows, a_p};
+}
+
+
 function same(f1,f2){
   return (f1.join("\n") == f2.join("\n"));
 }
@@ -553,7 +591,7 @@ function live(text,auto) {
     var data;
     var rows = text.split("\n");
 
-    var p_rows = filterParticipant(rows);
+    var p_rows = filterParticipantOverride(rows);
 
     rows = p_rows.rows;
 
