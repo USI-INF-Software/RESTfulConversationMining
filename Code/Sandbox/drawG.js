@@ -207,7 +207,7 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
 
 //          g.setEdge(k+' '+s, "end-"+end, {class: "edge-thickness-1 delay-coloring-0"});
 
- 
+
           if(nodes[k][s].outgoingXOR){
               g.setEdge("XOR-"+k+' '+s, "end-"+end, {
                 label : roundUp(1/totalRequests[k]*100,1)+"%",
@@ -261,7 +261,7 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
                 if (x.length > 0) {
                   rem.push(v);
                 }
-                
+
                 x.forEach((n)=>{
                   let before_x = f_predecessors(n);
                   let all_start = true;
@@ -279,7 +279,7 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
                   }
                 });
               }
-              
+
             });
             rem.forEach((n)=>{g.removeNode(n); console.log("Removing "+n)});
 
@@ -290,7 +290,7 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
             });
           });
 
-          // 
+          //
 
           // g.sinks().forEach(function(v) {
           //   var node = g.node(v);
@@ -312,6 +312,25 @@ var drawG = function(g, nodes, comparisonTableData, incomingXorNodes, totalAvgKe
           if (mend) {
             mergeXOR(g.sinks(),g.predecessors.bind(g),g.successors.bind(g),"end-",(s,d)=>{g.setEdge(d,s)},"XOR-","stroke-width: 4; stroke: black");
           }
+
+          let senders = g.nodes().filter((n)=>{return g.node(n).label.toLowerCase().startsWith("send");});
+          let receivers = g.nodes().filter((n)=>{return g.node(n).label.toLowerCase().startsWith("receive");});
+
+          function parseSharedMessage(s) {
+            return s.split("\n")[0].toLowerCase().replace("send","").replace("receive","").trim();
+          }
+
+          senders.forEach((source)=>{
+            let msg = parseSharedMessage(g.node(source).label);
+            console.log(msg);
+            let targets = receivers.filter((n)=>{return parseSharedMessage(g.node(n).label) == msg});
+            console.log(targets);
+            if (targets.length>0) {
+              //just connect to the first //minlen cannot be set to 0
+              g.setEdge(source, targets[0], { minlen: 1, arrowhead: "messageFlow", style: 'stroke: #888; fill: none; stroke-dasharray: 4 0 4' });
+            }
+          })
+
         }
 
 var setupShapes = function(render) {
@@ -334,7 +353,13 @@ var setupShapes = function(render) {
             .attr("transform", "translate("+translate+") scale("+scale+")");
 
           node.intersect = function(point) {
-            return dagreD3.intersect.polygon(node, points, point);
+            try {
+              return dagreD3.intersect.polygon(node, points, point);
+            } catch (e) {
+              console.log(node,points,point);
+              console.log(e);
+              return {x:0,y:0}
+            }
           };
 
           return shapeSvg;
@@ -400,7 +425,14 @@ var setupShapes = function(render) {
               .attr("transform", "translate(" + (-w/2) + "," + (-(h/2)) + ")");
 
              node.intersect = function(point) {
-                return dagreD3.intersect.polygon(node, points, point);
+                //return dagreD3.intersect.polygon(node, points, point);
+                try {
+                  return dagreD3.intersect.polygon(node, points, point);
+                } catch (e) {
+                  console.log(node,points,point);
+                  console.log(e);
+                  return {x:0,y:0}
+                }
              };
           }
 
@@ -426,7 +458,7 @@ var setupShapes = function(render) {
             { x: 0, y: 0 },
             { x: 0, y: -10 },
             { x: 10, y: 0 }
-          ],[ 
+          ],[
             { dx: 0, dy: 0 },
             { dx: 0, dy: 0 },
             { dx: -10, dy: 10 },
@@ -437,7 +469,7 @@ var setupShapes = function(render) {
             { x: -10, y: 0 },
             { x: 0, y: -10 },
             { x: 10, y: 0 }
-          ],[ 
+          ],[
             { dx: 10, dy: -10 },
             { dx: 10, dy: 10 },
             { dx: -10, dy: 10 },
@@ -448,21 +480,64 @@ var setupShapes = function(render) {
             { x: -100, y: 0 },
             { x: 0, y: -100 },
             { x: 100, y: 0 }
-          ],[ 
+          ],[
             { dx: 100, dy: -100 },
             { dx: 100, dy: 100 },
             { dx: -100, dy: 100 },
             { dx: -100, dy: -100 }
-          ]);                   
+          ]);
   render.shapes().reqresp = makeBox([
             { x: 0, y: 10 },
             { x: -10, y: 0 },
             { x: 0, y: -10 },
             { x: 10, y: 0 }
-          ],[ 
+          ],[
             { dx: 10, dy: -10 },
             { dx: 10, dy: 10 },
             { dx: -10, dy: 10 },
             { dx: -10, dy: -10 }
-          ],true);                   
+          ],true);
+  render.arrows().messageFlow = function normal(parent, id, edge, type) {
+          var marker = parent.append("marker")
+            .attr("id", id)
+            .attr("viewBox", "0 0 10 10")
+            .attr("refX", 9)
+            .attr("refY", 5)
+            .attr("markerUnits", "strokeWidth")
+            .attr("markerWidth", 8)
+            .attr("markerHeight", 6)
+            .attr("orient", "auto");
+
+          var path = marker.append("path")
+            .attr("d", "M 0 0 L 10 5 L 0 10 z")
+            .style("stroke-width", 1)
+            .style("stroke-dasharray", "1,0")
+            .style("fill", "#fff")
+            .style("stroke", "#888");
+          dagreD3.util.applyStyle(path, edge[type + "Style"]);
+
+          var marker = parent.append("marker")
+            .attr("id", id+"-0")
+            .attr("viewBox", "0 0 10 10")
+            .attr("refX", 0)
+            .attr("refY", 5)
+            .attr("markerUnits", "strokeWidth")
+            .attr("markerWidth", 5)
+            .attr("markerHeight", 5)
+            .attr("orient", "auto");
+
+          var path = marker.append("path")
+            .attr("d", "M 5,5 m -5,0 a 5,5 0 1,0 10,0 a 5,5 0 1,0 -10,0")
+            .style("stroke-width", 1)
+            .style("stroke-dasharray", "1,0")
+            .style("fill", "#fff")
+            .style("stroke", "#888");
+          dagreD3.util.applyStyle(path, edge[type + "Style"]);
+
+          //hack to inject the marker-start attribute
+          let path_dom = parent.node().parentNode.querySelector("path.path");
+          path_dom.setAttribute("marker-start",path_dom.getAttribute("marker-end").replace("#"+id,"#"+id+"-0"));
+
+        };
+
 }
