@@ -586,10 +586,21 @@ function expandLog(rows){
   return expanded_rows;
 }
 
+function filterComments(rr) {
+   return rr.filter((r)=>{return !r.startsWith("///");})
+}
+
 function live(text,auto) {
   delay(()=>{
     var data;
+
+    // localStorage.setItem("sketchlog",text+"\n---\n"+localStorage.getItem("sketchlog"));
+
     var rows = text.split("\n");
+
+    let c_rows = filterComments(rows);
+
+    rows = c_rows;
 
     var p_rows = filterParticipantOverride(rows);
 
