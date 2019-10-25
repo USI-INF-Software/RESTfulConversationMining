@@ -29,15 +29,21 @@ function init(){
   })
 
   function setTooltip(n) {
-    let title_txt = n.querySelector("title").innerHTML;
+    let title = n.querySelector("title");
+    if (title) {
+      let title_txt = title.innerHTML;
+      //this is really brittle as it assumes that the a element always follows the path
+      //on the same level in the svg
+      let a_txt = n.nextElementSibling.querySelector("tspan").textContent;
 
-    let a = title_txt.split(" ");
+      let a = title_txt.split(" ");
 
-    let first = a.shift();
+      let first = a.shift();
 
-    let t = document.querySelector("#title");
-    t.innerHTML = first + " <span style='color:black'>" + a.join(" ") + "</span>";
-    t.style.color = n.style.fill;
+      let t = document.querySelector("#title");
+      t.innerHTML = "<code>" + a_txt + "</code>"+ first + " <span style='color:black'>" + a.join(" ") + "</span>";
+      t.style.color = n.style.fill;
+    }
   }
 
   function pathmouseover(e) {
