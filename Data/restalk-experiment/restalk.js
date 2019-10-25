@@ -1,4 +1,14 @@
+function makeDelay(ms,callback) {
+    var timer;
+    return function(e){
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(()=>{callback(e)}, ms);
+    };
+};
+
+
 function init(){
+
 
   //zoom
   document.querySelectorAll("a").forEach((e)=>{e.setAttribute("target","_blank")});
@@ -62,8 +72,8 @@ function init(){
   }
 
   document.querySelectorAll("path").forEach((a)=>{
-    a.addEventListener("mouseover", pathmouseover);
-    a.addEventListener("mouseout", pathmouseout);
+    a.addEventListener("mouseover", makeDelay(250,pathmouseover));
+    a.addEventListener("mouseout", makeDelay(250,pathmouseout));
   });
 
   function rectmouseover(e) {
@@ -71,37 +81,68 @@ function init(){
     console.log(n.id);
     n.style.fillOpacity = 0.5;
     n.style.fill = "yellow";
+    n.style.strokeDasharray = "1px";
 
+    //comment out for production
     document.querySelector("#title").innerHTML = n.id;
 
-    highlight(hyperflow_lookup[n.id]);
+    highlight(hyperflow_lookup[n.id], highlight_one);
   }
 
-  function highlight(ids){
+  function highlight(ids,c){
     if (ids) {
-      ids.forEach(highlight_one)
+      ids.forEach(c)
     }
   }
 
   function highlight_one(id){
-    document.getElementById(id).style.fill = "yellow";
+    let n = document.getElementById(id);
+    n.style.fill = "red";
+    n.style.fillOpacity = 0.5;
+  }
+
+  function un_highlight_one(id){
+    let n = document.getElementById(id);
+    n.style.fill = "white";
+    n.style.fillOpacity = 0.25;
   }
 
   function rectmouseout(e) {
     let n = e.target;
-    n.style.fill = "none";
+    n.style.fill = "white";
+    n.style.fillOpacity = 0.25;
+    n.style.strokeDasharray = "4px 12px";
+    highlight(hyperflow_lookup[n.id], un_highlight_one);
+  }
+
+  let ids = [];
+
+  function rectmouseclick(e) {
+    let n = e.target;
+    ids.push(n.id);
+
+    let txt = '"' + ids[0] + '" : [' + ids.slice(1).map((i)=>`"${i}"`).join(", ")+"],";
+    console.log(txt);
+
+    document.querySelector('#ids code').innerHTML = txt;
   }
 
   document.querySelectorAll("rect").forEach((a)=>{
     a.addEventListener("mouseover", rectmouseover);
     a.addEventListener("mouseout", rectmouseout);
+    a.addEventListener("click", rectmouseclick);
+    a.style.fill = "white";
+    a.style.fillOpacity = 0.2;
   });
 
   let div = document.createElement("div");
   document.body.appendChild(div);
-  div.innerHTML = "<p id='title' style='padding: 1em; position: fixed; top: 0; left: 1em'></p>";
+  div.innerHTML = "<p id='title' style='padding: 1em; position: fixed; top: 0; left: 1em'></p><p id='ids'><code></code> <sup id='clear'>X</sup></p>";
 
-
+  document.querySelector("#clear").addEventListener("click",(e)=>{
+    document.querySelector('#ids code').innerHTML = "";
+    ids = "";
+  })
 
 }
 
