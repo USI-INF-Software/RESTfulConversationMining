@@ -66,6 +66,37 @@ function init(){
     a.addEventListener("mouseout", pathmouseout);
   });
 
+  function rectmouseover(e) {
+    let n = e.target;
+    console.log(n.id);
+    n.style.fillOpacity = 0.5;
+    n.style.fill = "yellow";
+
+    document.querySelector("#title").innerHTML = n.id;
+
+    highlight(hyperflow_lookup[n.id]);
+  }
+
+  function highlight(ids){
+    if (ids) {
+      ids.forEach(highlight_one)
+    }
+  }
+
+  function highlight_one(id){
+    document.getElementById(id).style.fill = "yellow";
+  }
+
+  function rectmouseout(e) {
+    let n = e.target;
+    n.style.fill = "none";
+  }
+
+  document.querySelectorAll("rect").forEach((a)=>{
+    a.addEventListener("mouseover", rectmouseover);
+    a.addEventListener("mouseout", rectmouseout);
+  });
+
   let div = document.createElement("div");
   document.body.appendChild(div);
   div.innerHTML = "<p id='title' style='padding: 1em; position: fixed; top: 0; left: 1em'></p>";
