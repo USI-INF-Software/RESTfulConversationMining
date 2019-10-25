@@ -1,10 +1,45 @@
 <html>
 <head>
-<style>svg {max-width: 100vw; max-height: 100vh; }
-</style>
+<link rel="stylesheet" href="restalk.css"/>
 </head>
 <body onload="init()">
+<script>
+  let hyperflow_lookup = {
+    //GET /gallery/search/q={{searchItem}} (ids)
+    "rect8286-3-2-8" : ["rect8286-3-2", "rect8286-3-9", "rect8286-3-2-3-90", "rect8286-3-2-3-90-0", "rect8286-3-2-3-90-2", "rect8286-3-2-3-90-03", "rect8286-3-4-7-3-1", "rect8286-3-9-3-3", "rect8286-3-2-3-90-29", "rect8286-3-2-3-90-29-1", "rect8286-3-2-3-90-29-1-5-5-2-4", "rect8286-3-2-3-90-29-1-5"], 
 
+    //GET /gallery/search/q={{searchItem}} (names)
+    "rect8286-3-2-3" : ["rect8286-3-2-3-0", "rect8286-3-2-3-3"],
+
+    //GET /gallery/{{section}} (ids)
+    "rect8286-3-2-8-7" : ["rect8286-3-2", "rect8286-3-9", "rect8286-3-2-3-90", "rect8286-3-2-3-90-0", "rect8286-3-2-3-90-2", "rect8286-3-2-3-90-03", "rect8286-3-4-7-3-1", "rect8286-3-9-3-3", "rect8286-3-2-3-90-29", "rect8286-3-2-3-90-29-1", "rect8286-3-2-3-90-29-1-5-5-2-4", "rect8286-3-2-3-90-29-1-5"], 
+
+    //GET /gallery/{{section}} (names)
+    "rect8286-3-2-3-4" : ["rect8286-3-2-3-0", "rect8286-3-2-3-3"],
+
+    //GET /tags
+    "rect8286-3-2-3-5" : ["rect8286-3-2-3-0", "rect8286-3-2-3-3"],
+
+    // GET /gallery/t/{{tagName}}
+    "rect8286-3-2-8-2" : ["rect8286-3-2-3-90", "rect8286-3-2-3-90-0", "rect8286-3-2-3-90-2", "rect8286-3-2-3-90-03", "rect8286-3-4-7-3-1", "rect8286-3-9-3-3", "rect8286-3-2", "rect8286-3-9", "rect8286-3-2-3-90-29", "rect8286-3-2-3-90-29-1", "rect8286-3-2-3-90-29-1-5", "rect8286-3-2-3-90-29-1-5-5-2-4"], 
+
+    // GET /gallery/{{galleryHash}}/tags
+    "rect8286-3-2-3-9" : ["rect8286-3-2-3-0", "rect8286-3-2-3-3"], 
+
+    // GET /album/{{albumHash}}
+    "rect8286-3-7-7" : ["rect8286-3-9"], 
+
+    // GET /gallery/{{galleryHash}}/comments
+    "rect8286-3-7-7-0" : ["rect8286-3-2-3-90-29-1-5-5", "rect8286-3-2-3-90-29-1-5-5-2", "rect8286-3-2-3-90-29-1-5-5-7", "rect8286-3-2-3-90-29-1-5-5-1", "rect8286-3-2-3-90-29-1-5-5-5"],
+
+    // POST gallery/{{galleryHash}}/comment
+    "rect8286-3-7-7-3" : ["rect8286-3-2-3-90-29-1-5-5", "rect8286-3-2-3-90-29-1-5-5-2", "rect8286-3-2-3-90-29-1-5-5-7", "rect8286-3-2-3-90-29-1-5-5-1", "rect8286-3-2-3-90-29-1-5-5-5"],
+
+    // POST /comment/{{commentId}}
+    "rect8286-3-7-7-2" : ["rect8286-3-2-3-90-29-1-5-5", "rect8286-3-2-3-90-29-1-5-5-2", "rect8286-3-2-3-90-29-1-5-5-7", "rect8286-3-2-3-90-29-1-5-5-1", "rect8286-3-2-3-90-29-1-5-5-5"]
+
+  }
+</script>
 <svg
    xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
    xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -2809,21 +2844,5 @@
 </svg>
 
 <script src="https://d3js.org/d3.v5.min.js"></script>
-<script>
-function init(){
-  document.querySelectorAll("a").forEach((e)=>{e.setAttribute("target","_blank")});
-  let svg = d3.select("svg");
-  let zoom = d3.zoom().on("zoom", ()=>{
-    //console.log(d3.event.transform);
-    //document.querySelector("svg").style.transform = d3.event.transform;
-    d3.select("svg > g").attr("transform", d3.event.transform);
-  });
-  svg.call(zoom);
-  let dx = window.innerWidth/2 + 100;
-  let dy = window.innerHeight/2 - 200;
-  let initialScale = Math.min(window.innerWidth/document.querySelector("svg").getAttribute("width"), window.innerHeight/document.querySelector("svg").getAttribute("height"));
-  console.log(svg.width,dx,dy,initialScale);
-  svg.call(zoom.transform, d3.zoomIdentity.translate(dx,dy).scale(initialScale));
-};
-</script>
+<script src="restalk.js"></script>
 </body>

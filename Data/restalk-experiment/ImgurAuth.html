@@ -1,10 +1,33 @@
 <html>
 <head>
-<style>svg {max-width: 100vw; max-height: 100vh; }
-</style>
+<link rel="stylesheet" href="restalk.css"/>
 </head>
 <body onload="init()">
+<script>
+  let hyperflow_lookup = {
+    // GET /account/me/images
+    "rect8286-3-28" : ["rect8286-3-9", "rect8286-3-9-3", "rect8286-3-9-3-3", "rect8286-3-9-3-3-2", "rect8286-3-9-3-5", "rect8286-3-6", "rect8286-3-4-7-3-3-7-9", "rect8286-3-4-7-3-3-7", "rect8286-3-4-7-3-3"],
 
+    // GET /gallery/search/q={{parameter:searchItem}}
+    "rect8286-3-28-2" : ["rect8286-3-9", "rect8286-3-9-3", "rect8286-3-9-3-3", "rect8286-3-9-3-3-2", "rect8286-3-9-3-5", "rect8286-3-2", "rect8286-3-2-9", "rect8286-3-4-7-3-4-7", "rect8286-3-4-7-3-4-2", "rect8286-3-4-7-3-4", "rect8286-3-4-7-3", "rect8286-3-4-7-3-1", "rect8286-3-4-7-3-4-4", "rect8286-3-4-7-3-4-2-6", "rect8286-3-4-7-3-4-2-6-7", "rect8286-3-4-7-3-4-2-6-7-3"], 
+
+    // GET /account/{{username}}/albums
+    "rect8286-3-28-0" : ["rect8286-3-6-3", "rect8286-3-2-9", "rect8286-3-2", "rect8286-3-4-7-3-4-2", "rect8286-3-4-7-3-4-2-6", "rect8286-3-4-7-3-4-7", "rect8286-3-4-7-3-4", "rect8286-3-4-7-3", "rect8286-3-4-7-3-1", "rect8286-3-4-7-3-4-4"], 
+
+    // POST /upload
+    "rect8286-3" : ["rect8286-3-6", "rect8286-3-9", "rect8286-3-9-3", "rect8286-3-9-3-3", "rect8286-3-9-3-3-2", "rect8286-3-9-3-5", "rect8286-3-4-7-3-3", "rect8286-3-4-7-3-3-7", "rect8286-3-4-7-3-3-7-9"], 
+
+    // POST /album
+    "rect8286-3-7" : ["rect8286-3-6-3", "rect8286-3-4-7-3-1", "rect8286-3-4-7-3", "rect8286-3-4-7-3-4", "rect8286-3-4-7-3-4-7", "rect8286-3-2", "rect8286-3-2-9", "rect8286-3-4-7-3-4-4", "rect8286-3-4-7-3-4-2-6", "rect8286-3-4-7-3-4-2"],
+
+    // GET /album/{{albumHash}}
+    "rect8286-3-7-7" : ["rect8286-3-9", "rect8286-3-9-3", "rect8286-3-9-3-3", "rect8286-3-9-3-3-2", "rect8286-3-9-3-5", "rect8286-3-7-7-3", "rect8286-3-4-7-3-3", "rect8286-3-4-7-3-3-7", "rect8286-3-4-7-3-3-7-9"], 
+
+    // GET /album/{{albumHash}}/images
+    "rect8286-3-7-7-4" : ["rect8286-3-9", "rect8286-3-9-3", "rect8286-3-9-3-3", "rect8286-3-9-3-3-2", "rect8286-3-9-3-5", "rect8286-3-7-7-3", "rect8286-3-4-7-3-3", "rect8286-3-4-7-3-3-7", "rect8286-3-4-7-3-3-7-9"]
+
+  }
+</script>
 <svg
    xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
    xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -3679,22 +3702,6 @@
   </g>
 </svg>
 
-
 <script src="https://d3js.org/d3.v5.min.js"></script>
-<script>
-function init(){
-  document.querySelectorAll("a").forEach((e)=>{e.setAttribute("target","_blank")});
-  let svg = d3.select("svg");
-  let zoom = d3.zoom().on("zoom", ()=>{
-    //console.log(d3.event.transform);
-    //document.querySelector("svg").style.transform = d3.event.transform;
-    d3.select("svg > g").attr("transform", d3.event.transform);
-  });
-  svg.call(zoom);
-  let dx = window.innerWidth/2 + 100;
-  let dy = window.innerHeight/2 - 200;
-  let initialScale = Math.min(window.innerWidth/document.querySelector("svg").getAttribute("width"), window.innerHeight/document.querySelector("svg").getAttribute("height"));
-  console.log(svg.width,dx,dy,initialScale);
-  svg.call(zoom.transform, d3.zoomIdentity.translate(dx,dy).scale(initialScale));
-};
-</script>
+<script src="restalk.js"></script>
+</body>
