@@ -84,7 +84,7 @@ function init(){
     n.style.strokeDasharray = "1px";
 
     //comment out for production
-    document.querySelector("#title").innerHTML = n.id;
+    //document.querySelector("#title").innerHTML = n.id;
 
     highlight(hyperflow_lookup[n.id], highlight_one);
   }
@@ -130,7 +130,8 @@ function init(){
   document.querySelectorAll("rect").forEach((a)=>{
     a.addEventListener("mouseover", rectmouseover);
     a.addEventListener("mouseout", rectmouseout);
-    a.addEventListener("click", rectmouseclick);
+    //comment out for production
+    //a.addEventListener("click", rectmouseclick);
     a.style.fill = "white";
     a.style.fillOpacity = 0.2;
   });

@@ -12,3 +12,6 @@ svg {max-width: 100vw; max-height: 100vh; }
 #clear:hover {font-weight: bold; color: red; }
 
 rect {transition: fill 1s;}
+
+/* this will hide the ids collection box */
+#ids {display: none;}
