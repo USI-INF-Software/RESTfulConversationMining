@@ -38,13 +38,22 @@ function init(){
     a.addEventListener("mouseover", amouseover);
   })
 
+  function getMethodURL(n) {
+    try {
+      return n.nextElementSibling.querySelector("tspan").textContent;
+    } catch(e) {
+      console.log(e);
+      return "";
+    }
+  }
+
   function setTooltip(n) {
     let title = n.querySelector("title");
     if (title) {
       let title_txt = title.innerHTML;
       //this is really brittle as it assumes that the a element always follows the path
       //on the same level in the svg
-      let a_txt = n.nextElementSibling.querySelector("tspan").textContent;
+      let a_txt = getMethodURL(n); //n.nextElementSibling.querySelector("tspan").textContent;
 
       let a = title_txt.split(" ");
 
@@ -71,9 +80,22 @@ function init(){
     setTooltip(n);
   }
 
+  let seq = [];
+
+  function pathclick(e) {
+    let a_txt = getMethodURL(e.target);
+    seq.push(a_txt);
+
+    //let txt = "<textarea>"+seq.join("\n")+"</textarea>";
+    console.log(seq);
+
+    document.querySelector('#ids textarea').value += "\n" + a_txt;
+  }
+
   document.querySelectorAll("path").forEach((a)=>{
     a.addEventListener("mouseover", makeDelay(250,pathmouseover));
     a.addEventListener("mouseout", makeDelay(250,pathmouseout));
+    a.addEventListener("click", makeDelay(250,pathclick));
   });
 
   function lookup(id) {
@@ -152,11 +174,12 @@ function init(){
 
   let div = document.createElement("div");
   document.body.appendChild(div);
-  div.innerHTML = "<p id='title' style='padding: 1em; position: fixed; top: 0; left: 1em'></p><p id='ids'><code></code> <sup id='clear'>X</sup></p>";
+  div.innerHTML = "<p id='title' style='padding: 1em; position: fixed; top: 0; left: 1em'></p><p id='ids'><textarea></textarea> <sup id='clear'>X</sup></p>";
 
   document.querySelector("#clear").addEventListener("click",(e)=>{
-    document.querySelector('#ids code').innerHTML = "";
-    ids = "";
+    document.querySelector('#ids textarea').value = "";
+    ids = [];
+    seq = [];
   })
 
 }
