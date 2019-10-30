@@ -76,6 +76,20 @@ function init(){
     a.addEventListener("mouseout", makeDelay(250,pathmouseout));
   });
 
+  function lookup(id) {
+    let result = [];
+    if (hyperflow_lookup[id]) {
+      result = result.concat(hyperflow_lookup[id]);
+    }
+    Object.keys(hyperflow_lookup).forEach((k)=>
+    {
+      if (hyperflow_lookup[k].indexOf(id) >= 0) {
+        result.push(k);
+      }
+    })
+    return result;
+  }
+
   function rectmouseover(e) {
     let n = e.target;
     console.log(n.id);
@@ -86,7 +100,7 @@ function init(){
     //comment out for production
     //document.querySelector("#title").innerHTML = n.id;
 
-    highlight(hyperflow_lookup[n.id], highlight_one);
+    highlight(lookup(n.id), highlight_one);
   }
 
   function highlight(ids,c){
@@ -112,7 +126,7 @@ function init(){
     n.style.fill = "white";
     n.style.fillOpacity = 0.25;
     n.style.strokeDasharray = "4px 12px";
-    highlight(hyperflow_lookup[n.id], un_highlight_one);
+    highlight(lookup(n.id), un_highlight_one);
   }
 
   let ids = [];
